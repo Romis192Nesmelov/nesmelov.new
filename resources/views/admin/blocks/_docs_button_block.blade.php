@@ -1,0 +1,1 @@
+<a href="JavaScript:newWindow = window.open('/admin/print-doc/{{ $href }}','','top=100,left=100,toolbar=0,location=0,directories=0,status=0,menuBar=0,scrollBars=0,resizable=0,width=850,height=1000');newWindow.focus();">@include('blocks._button_block', ['type' => 'button', 'icon' => ' icon-printer', 'text' => $text, 'addClass' => 'print-button'])</a>

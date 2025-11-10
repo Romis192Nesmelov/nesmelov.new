@@ -1,0 +1,1 @@
+{!! $check ? '<i class="icon-checkmark4"></i>' : '<i class="icon-blocked"></i>' !!}

@@ -1,0 +1,1 @@
+<div class="p-slider"><input type="text" name="{{ $sliderName }}" id="{{ $sliderId }}" class="slider" value="" /></div>

@@ -1,0 +1,1 @@
+@include('admin.blocks._extended_status_block',['descriptions' => ['ИП','ООО','Ч/Л','ЗАО'], 'status' => $customer->ltd+1])
