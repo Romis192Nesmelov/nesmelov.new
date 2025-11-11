@@ -1,91 +1,70 @@
 <?php
 
 namespace App\Http\Controllers;
-//use App\Bank;
-//use App\Bill;
-//use App\Branch;
-//use App\Customer;
-//use App\FixTax;
-//use App\Jobs\SendMessage;
-//use Illuminate\Database\Eloquent\Model;
-//use Illuminate\Support\Facades\Gate;
-//use Illuminate\Support\Facades\Helper;
-//use App\SubTask;
-//use App\Task;
-//use App\Message;
-//use App\User;
-//use App\SentEmail;
-//use Illuminate\Support\Facades\Auth;
-//use Illuminate\Support\Facades\Mail;
-//use Illuminate\Support\Facades\Config;
+use App\Models\Bank;
+use App\Models\Bill;
+use App\Models\Branch;
+use App\Models\Customer;
+use App\Models\FixTax;
+use App\Models\SubTask;
+use App\Models\Task;
+use App\Models\Message;
+use App\Models\User;
+use App\Jobs\SendMessage;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
+use JetBrains\PhpStorm\Pure;
 
 trait HelperTrait
 {
 
-    public $breadcrumbs = [];
-    public $data = [];
-
-    public $taskGetCondition = [
-        'done' => 'Оплачено',
-        'wait' => 'Завершено',
-        'work' => 'В работе',
-        'hold' => 'Отложено',
-        'returned' => 'Доработка',
-        'fake_made' => 'Фейк создан',
-        'fake_done' => 'Фейк оплачен'
-    ];
-    public $billsStatuses = ['Оплачен','Выставлен на всю сумму','Выставлен на часть суммы'];
-    public $incomeStatuses = ['Выплачено','Завершено','Предоплата'];
-
-    public $validationPhone = 'regex:/^((\+)?(\d)(\s)?(\()?[0-9]{3}(\))?(\s)?([0-9]{3})(\-)?([0-9]{2})(\-)?([0-9]{2}))$/';
-    public $validationId = 'required|integer|exists:';
-    public $validationPassword = 'required|confirmed|min:3|max:50';
-    public $validationLoginPassword = 'required|min:3|max:50';
-    public $validationImage = 'mimes:jpeg|min:5|max:5000';
-    public $validationContactPerson = 'nullable|min:3|max:255';
-    public $validationEmail = 'nullable|email';
-    public $validationName = 'required|min:5|max:255';
-    public $validationValue = 'required|integer|max:2000000';
-    public $validationDate = 'required|regex:/^((\d){2}\/(\d){2}\/(\d){4})$/';
-    public $validationBillNumber = 'required|integer|min:1|unique:bills,number';
-    public $validationTaskId = 'required|integer|exists:tasks,id';
-    public $validationCustomerId = 'required|integer|exists:customers,id';
-    public $validationBankName = 'required|min:10|max:255';
-    public $validationBankId = 'required|size:9';
-    public $validationCheckingAccount = 'required|min:20|max:24';
-    public $validationCorrespondentAccount = 'required|min:20|max:24';
-    public $regYear = '/^(20(\d){2})$/';
-//    public $metas = [
-//        'meta_description' => ['name' => 'description', 'property' => false],
-//        'meta_keywords' => ['name' => 'keywords', 'property' => false],
-//        'meta_twitter_card' => ['name' => 'twitter:card', 'property' => false],
-//        'meta_twitter_size' => ['name' => 'twitter:size', 'property' => false],
-//        'meta_twitter_creator' => ['name' => 'twitter:creator', 'property' => false],
-//        'meta_og_url' => ['name' => false, 'property' => 'og:url'],
-//        'meta_og_type' => ['name' => false, 'property' => 'og:type'],
-//        'meta_og_title' => ['name' => false, 'property' => 'og:title'],
-//        'meta_og_description' => ['name' => false, 'property' => 'og:description'],
-//        'meta_og_image' => ['name' => false, 'property' => 'og:image'],
-//        'meta_robots' => ['name' => 'robots', 'property' => false],
-//        'meta_googlebot' => ['name' => 'googlebot', 'property' => false],
-//        'meta_google_site_verification' => ['name' => 'robots', 'property' => false],
+//    public array $breadcrumbs = [];
+//    public array $data = [];
+//
+//    public array $taskGetCondition = [
+//        'done' => 'Оплачено',
+//        'wait' => 'Завершено',
+//        'work' => 'В работе',
+//        'hold' => 'Отложено',
+//        'returned' => 'Доработка',
+//        'fake_made' => 'Фейк создан',
+//        'fake_done' => 'Фейк оплачен'
 //    ];
+//    public array $billsStatuses = ['Оплачен','Выставлен на всю сумму','Выставлен на часть суммы'];
+//    public array $incomeStatuses = ['Выплачено','Завершено','Предоплата'];
+//
+//    public string $validationPhone = 'regex:/^((\+)?(\d)(\s)?(\()?[0-9]{3}(\))?(\s)?([0-9]{3})(\-)?([0-9]{2})(\-)?([0-9]{2}))$/';
+//    public string $validationId = 'required|integer|exists:';
+//    public string $validationPassword = 'required|confirmed|min:3|max:50';
+//    public string $validationLoginPassword = 'required|min:3|max:50';
+//    public string $validationImage = 'mimes:jpeg|min:5|max:5000';
+//    public string $validationContactPerson = 'nullable|min:3|max:255';
+//    public string $validationEmail = 'nullable|email';
+//    public string $validationName = 'required|min:5|max:255';
+//    public string $validationValue = 'required|integer|max:2000000';
+//    public string $validationDate = 'required|regex:/^((\d){2}\/(\d){2}\/(\d){4})$/';
+//    public string $validationBillNumber = 'required|integer|min:1|unique:bills,number';
+//    public string $validationTaskId = 'required|integer|exists:tasks,id';
+//    public string $validationCustomerId = 'required|integer|exists:customers,id';
+//    public string $validationBankName = 'required|min:10|max:255';
+//    public string $validationBankId = 'required|size:9';
+//    public string $validationCheckingAccount = 'required|min:20|max:24';
+//    public string $validationCorrespondentAccount = 'required|min:20|max:24';
+//    public string $regYear = '/^(20(\d){2})$/';
 
-//    public $youHaveNoRights = 'Для совершения данной операции у Вас нет прав!';
-//    public $wrongCompletionTime = 'Не верное время выполнения!';
-//    public $changedTaskStatus = 'Изменен статус задачи';
-//    public $changedSubTaskStatus = 'Изменен статус задачи подзадачи';
-//    public $changedTaskCompletionTime = 'Изменено время выполнения задачи';
-//    public $changedSubTaskCompletionTime = 'Изменено время выполнения подзадачи';
-//    public $changedTaskPaymentTime = 'Изменено время предполагаемой оплаты';
 
-    public function saveCompleteMessage()
-    {
-        Session::flash('message','Сохранение произведено');
-    }
-
-//    public function getStatuses()
+//    public function saveCompleteMessage(): void
+//    {
+//        Session::flash('message',__('Saving completed'));
+//    }
+//
+//    public function getStatuses(): void
 //    {
 //        $this->data['statuses'] = [];
 //        $key = 1;
@@ -96,38 +75,38 @@ trait HelperTrait
 //        }
 //    }
 //
-//    public function getStatusesSimple()
+//    public function getStatusesSimple(): void
 //    {
 //        $this->data['statuses_simple'] = [];
 //        foreach ($this->taskGetCondition as $description) {
 //            $this->data['statuses_simple'][] = $description;
 //        }
 //    }
-//
+
 //    public function getBackUri($path)
 //    {
 //        Session::put('back_uri',$path);
 //    }
-//
-//    public function getSidebar()
+
+//    public function getSidebar(): void
 //    {
 //        $this->data['sidebar'] = count($this->data['tasks']) || (isset($this->data['own_tasks']) && count($this->data['own_tasks']));
 //    }
 //
-//    public function getFixTax()
+//    public function getFixTax(): void
 //    {
-//        $this->data['fix_tax'] = FixTax::where('year',isset($this->data['year']) ? $this->data['year'] : date('Y'))->first();
+//        $this->data['fix_tax'] = FixTax::query()->where('year', $this->data['year'] ?? date('Y'))->first();
 //    }
 //
-//    public function getTaskValidationSomeFields($customerId, $validationArr, $timeFields)
+//    public function getTaskValidationSomeFields($customerId, $validationArr, $timeFields): array
 //    {
-//        $customer = Customer::findOrFail($customerId);
+//        $customer = Customer::query()->findOrFail($customerId);
 //        $validationArr['status'] = 'required|integer|min:1|max:5';
 //        if ($customer->ltd != 2 && !in_array('convention_date', $timeFields)) $timeFields[] = 'convention_date';
 //        return [$validationArr, $timeFields];
 //    }
 //
-//    public function getSimpleTaskStatus($taskStatus)
+//    public function getSimpleTaskStatus($taskStatus): string
 //    {
 //        $k = 1;
 //        $status = '';
@@ -141,15 +120,15 @@ trait HelperTrait
 //        return $status;
 //    }
 //
-//    protected function getTasksInWork($status=null)
+//    protected function getTasksInWork($status=null): void
 //    {
 //        if ((int)$this->data['year'] == (int)date('Y') && (!$status || $status == 3)) {
-//            if (Gate::allows('is-admin')) $this->data['work_tasks'] = Task::where('status',3)->count();
-//            else $this->data['work_tasks'] = Task::where('status',3)->where('user_id',Auth::id())->orWhere('owner_id',Auth::id())->count();
+//            if (Gate::allows('is-admin')) $this->data['work_tasks'] = Task::query()->where('status',3)->count();
+//            else $this->data['work_tasks'] = Task::query()->where('status',3)->where('user_id',Auth::id())->orWhere('owner_id',Auth::id())->count();
 //        }
 //    }
 //
-//    public function getBaseFieldsMailMessage($task)
+//    public function getBaseFieldsMailMessage($task): array
 //    {
 //        $mailFields = [];
 //        $mailFields['id'] = $task->id;
@@ -160,11 +139,11 @@ trait HelperTrait
 //        return $mailFields;
 //    }
 //
-//    public function getNewTaskFieldsMailMessage($task,$subTask,$fields)
+//    #[Pure] public function getNewTaskFieldsMailMessage($task, $subTask, $fields): array
 //    {
 //        $fields['id'] = $subTask ? $subTask->id : $task->id;
-//        $fields['parent_id'] = $subTask ? $subTask->task->id : null;
-//        $fields['parent_name'] = $subTask ? $subTask->task->name : null;
+//        $fields['parent_id'] = $subTask?->task->id;
+//        $fields['parent_name'] = $subTask?->task->name;
 //        $fields['customer'] = $task->customer->name;
 //        $fields['email'] = $task->email ? $task->email : $task->customer->email;
 //        $fields['phone'] = $task->phone ? $task->phone : $task->customer->phone;
@@ -175,38 +154,38 @@ trait HelperTrait
 //        return $fields;
 //    }
 //
-//    public function processingWorkImageFields($work)
+//    public function processingWorkImageFields($work): array
 //    {
 //        return array_merge(
-//            $this->processingImage($work, 'preview', $work->branch->eng.'_'.$work->id.'_preview', 'images/portfolio/'.$work->branch->eng),
-//            $this->processingImage($work, 'full', $work->branch->eng.'_'.$work->id.'_full', 'images/portfolio/'.$work->branch->eng)
+//            $this->processingImage($work, 'preview', $work->branch->eng.'_'.$work->id.'_preview', 'storage/images/portfolio/'.$work->branch->eng),
+//            $this->processingImage($work, 'full', $work->branch->eng.'_'.$work->id.'_full', 'storage/images/portfolio/'.$work->branch->eng)
 //        );
 //    }
 //
-//    public function processingImage(Model $model, $field, $name=null, $path=null)
+//    public function processingImage(Model $model, $field, $name=null, $path=null): array
 //    {
 //        $imageField = [];
-//        if ($this->request->hasFile($field)) {
+//        if (request()->hasFile($field)) {
 //            $this->unlinkFile($model, $field);
 //
 //            $info = pathinfo($model[$field]);
-//            $imageName = ($name ? $name : $info['filename']).'.'.$this->request->file($field)->getClientOriginalExtension();
-//            $path = $path ? $path : $info['dirname'];
+//            $imageName = ($name ?? $info['filename']).'.'.request()->file($field)->getClientOriginalExtension();
+//            $path = $path ?? $info['dirname'];
 //
-//            $this->request->file($field)->move(base_path('public/'.$path),$imageName);
+//            request()->file($field)->move(base_path('public/'.$path),$imageName);
 //            $imageField[$field] = $path.'/'.$imageName;
 //        }
 //        return $imageField;
 //    }
-//
-//    public function processingFields($checkboxFields = null, $ignoreFields = null, $timeFields = null, $colorFields = null)
+
+//    public function processingFields($checkboxFields=null, $ignoreFields=null, $timeFields=null): array
 //    {
-//        $exceptFields = ['_token','id'];
+//        $exceptFields = ['id'];
 //        if ($ignoreFields) {
 //            if (is_array($ignoreFields)) $exceptFields = array_merge($exceptFields, $ignoreFields);
 //            else $exceptFields[] = $ignoreFields;
 //        }
-//        $fields = $this->request->except($exceptFields);
+//        $fields = request()->except($exceptFields);
 //
 //        if ($checkboxFields) {
 //            if (is_array($checkboxFields)) {
@@ -228,18 +207,9 @@ trait HelperTrait
 //            }
 //        }
 //
-//        if ($colorFields) {
-//            if (is_array($colorFields)) {
-//                foreach ($colorFields as $field) {
-//                    $fields[$field] = $this->convertColor($fields[$field]);
-//                }
-//            } else {
-//                $fields[$colorFields] = $this->convertColor($fields[$colorFields]);
-//            }
-//        }
 //        return $fields;
 //    }
-//
+
 //    protected function checkTaskMessages()
 //    {
 //        foreach ($this->data['task']->messages as $message) {
@@ -250,12 +220,12 @@ trait HelperTrait
 //            } else $message->delete();
 //        }
 //    }
-//
+
 //    protected function checkTaskEdit($task)
 //    {
 //        if (Helper::forbbidenTaskEdit($task)) abort(403);
 //    }
-//
+
 //    public function sendNewTaskMessage($sendMail,$task,$fields)
 //    {
 //        if ($sendMail)
@@ -266,13 +236,13 @@ trait HelperTrait
 //                $fields
 //            );
 //    }
-//
+
 //    public function checkTaskStatus($fields)
 //    {
 //        if ($fields['status'] == 5) $fields['completion_time'] = time() + (60 * 60 * 24 * 2);
 //        return $fields;
 //    }
-//
+
 //    public function changeBillsBrothersStatus($signing, Task $task, $billId=null)
 //    {
 //        if ($signing == 3 && $task->paid_off && count($task->bills) > 1) {
@@ -284,7 +254,7 @@ trait HelperTrait
 //            }
 //        }
 //    }
-//
+
 //    public function changeTaskStatus($task,$status)
 //    {
 //        $this->updateStatistics($status, $task);
@@ -296,17 +266,16 @@ trait HelperTrait
 //            Bill::where('task_id',$task->id)->update(['status' => 1]);
 //        }
 //    }
-//
-//    public function deleteSomething(Model $model, $files=null, $checkRightsField=null)
+
+//    public function deleteSomething(Model $model, $files=null, $checkRightsField=null): JsonResponse
 //    {
-//        $table = $model->findOrFail($this->request->id);
+//        $table = $model->query()->findOrFail(request()->id);
 //        if (
-//            ($model instanceof User && $this->request->id == 1) ||
+//            ($model instanceof User && request()->id == 1) ||
 //            ($checkRightsField && Gate::denies('check-rights',[$table, $checkRightsField]))
 //        ) response()->json(['success' => false]);
 //
 //        if ($model instanceof User) {
-//
 //            if (count($table->tasks)) {
 //                $this->changeUserTask($table->tasks, 'user_id');
 //            }
@@ -320,7 +289,6 @@ trait HelperTrait
 //                }
 //            }
 //        }
-//
 //        $table->delete();
 //
 //        if ($files) {
@@ -333,7 +301,7 @@ trait HelperTrait
 //        return response()->json(['success' => true]);
 //    }
 //
-//    public function createTaskMessage($task,$mailView,$mailFields,$messageText,$messageStatus,$sendMail)
+//    public function createTaskMessage($task,$mailView,$mailFields,$messageText,$messageStatus,$sendMail): void
 //    {
 //        if (isset($task->task)) {
 //            $taskId = $task->task->id;
@@ -355,7 +323,7 @@ trait HelperTrait
 //                $mailFields
 //            );
 //
-//        Message::create([
+//        Message::query()->create([
 //            'message' => $messageText,
 //            'owner_id' => $owner->id,
 //            'user_id' => $user->id,
@@ -367,12 +335,12 @@ trait HelperTrait
 //        ]);
 //    }
 //
-//    public function sendMessage($mailTo, $copyMail, $template, array $fields=[], $pathToFile=null)
+//    public function sendMessage($mailTo, $copyMail, $template, array $fields=[], $pathToFile=null): void
 //    {
 //        dispatch(new SendMessage($mailTo, $copyMail, $template, $fields, $pathToFile));
 //    }
 //
-//    public function showView($view)
+//    public function showView($view): View
 //    {
 //        $usersSubmenu = [];
 //        $users = User::all();
@@ -437,21 +405,12 @@ trait HelperTrait
 //            'menus' => $menus
 //        ]);
 //    }
-//
+
 //    public function wrongCompletionTime()
 //    {
 //        return redirect()->back()->withInput()->withErrors(['completion_time' => $this->wrongCompletionTime]);
 //    }
-//
-//    public function convertColor($color)
-//    {
-//        if (preg_match('/^(hsv\(\d+\, \d+\%\, \d+\%\))$/',$color)) {
-//            $hsv = explode(',',str_replace(['hsv','(',')','%',' '],'',$color));
-//            $color = $this->fGetRGB($hsv[0],$hsv[1],$hsv[2]);
-//        }
-//        return $color;
-//    }
-//
+
 //    public function fGetRGB($iH, $iS, $iV)
 //    {
 //        if($iH < 0)   $iH = 0;   // Hue:
@@ -488,19 +447,19 @@ trait HelperTrait
 //        $dR *= 255; $dG *= 255; $dB *= 255;
 //        return 'rgb('.round($dR).', '.round($dG).', '.round($dB).')';
 //    }
-//
-//    public function convertTime($time)
+
+//    public function convertTime($time): string
 //    {
 //        $time = explode('/', $time);
 //        return $time[1].'/'.$time[0].'/'.$time[2];
 //    }
 //
-//    public function checkTasks()
+//    public function checkTasks(): void
 //    {
 //        $warningTime = (60*60*24);
-//        $tasksInWork = Task::where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->get();
-//        $completedTasks = Task::where('payment_time','<',time())->where('status',2)->get();
-//        $subTasksInWork = SubTask::where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->get();
+//        $tasksInWork = Task::query()->where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->get();
+//        $completedTasks = Task::query()->where('payment_time','<',time())->where('status',2)->get();
+//        $subTasksInWork = SubTask::query()->where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->get();
 //
 //        $this->checkTasksInWork($tasksInWork,$warningTime);
 //        $this->checkTasksInWork($subTasksInWork,$warningTime);
@@ -510,78 +469,7 @@ trait HelperTrait
 //        }
 //    }
 //
-//    public function checkVir()
-//    {
-//        $paths = [
-//            [
-//                'path' => '*',
-//                'allow' => [
-//                    'app',
-//                    'bootstrap',
-//                    'config',
-//                    'database',
-//                    'public',
-//                    'resources',
-//                    'routes',
-//                    'sql',
-//                    'storage',
-//                    'tests',
-//                    'vendor',
-//                    'artisan',
-//                    'composer.json',
-//                    'composer.lock',
-//                    'package.json',
-//                    'phpunit.xml',
-//                    'readme.md',
-//                    'server.php',
-//                    'settings.xml',
-//                    'webpack.mix.js',
-//
-//                    'addmigrate.sh',
-//                    'cashclear.sh',
-//                    'host_connect.sh',
-//                    'migrate.sh'
-//                ]
-//            ],
-//            [
-//                'path' => 'public/*',
-//                'allow' => [
-//                    'ckeditor',
-//                    'css',
-//                    'files',
-//                    'images',
-//                    'js',
-//                    'sound',
-//                    'favicon.ico',
-//                    'index.php',
-//                    'web.config'
-//                ]
-//            ]
-//        ];
-//
-//        $badFiles = [
-//            '..env.swp',
-//            'composer'
-//        ];
-//
-//        foreach ($badFiles as $file) {
-//            $file = base_path($file);
-//            if (file_exists($file)) unlink($file);
-//        }
-//
-//        foreach ($paths as $path) {
-//            foreach(glob(base_path($path['path'])) as $item) {
-//                if (!in_array(pathinfo($item)['basename'], $path['allow'])) {
-//                    if (is_dir($item)) {
-//                        exec('rm -f -r'.$item.'/*');
-//                        rmdir($item);
-//                    } else unlink($item);
-//                }
-//            }
-//        }
-//    }
-//
-//    public function ruNumPropis($num)
+//    public function ruNumeral($num=0): string
 //    {
 //        # Все варианты написания чисел прописью от 0 до 999 скомпонуем в один небольшой массив
 //        $m = [
@@ -633,7 +521,23 @@ trait HelperTrait
 //        return implode(' ',array_reverse($o));
 //    }
 //
-//    public function sqlDump()
+//    public function getMessages($addCondition=null): array
+//    {
+//        $result = [];
+//        $messages = Message::query()->where('active_to_owner',1)->orWhere('active_to_user',1)->get();
+//        foreach ($messages as $message) {
+//            if (
+//                ($message->owner && Gate::allows('owner-message-not-admin', $message) && $message->active_to_owner) ||
+//                ($message->user && Gate::allows('user-message-not-admin', $message) && $message->active_to_user) ||
+//                $addCondition
+//            ) {
+//                $result[] = $message;
+//            }
+//        }
+//        return $result;
+//    }
+//
+//    public function sqlDump(): void
 //    {
 //        $dumpName = base_path('sql/dump').date('dmy').'.sql';
 //        echo shell_exec("mysqldump --user=".Config::get('app.db_user')." --password=".Config::get('app.db_password')." --host=127.0.0.1 ".Config::get('app.db_name')." > ".$dumpName);
@@ -641,13 +545,32 @@ trait HelperTrait
 ////        unlink($dumpName);
 //    }
 //
-//    private function unlinkFile($table, $file, $path='')
+//    private function changeUserTask($tasks, $field): void
+//    {
+//        foreach ($tasks as $task) {
+//            $task[$field] = 1;
+//            $task->save();
+//        }
+//    }
+//
+//    private function seenAll(): JsonResponse
+//    {
+//        $messagesList = [];
+//        $messages = $this->getMessages();
+//        foreach ($messages as $message) {
+//            $this->setSeenMessage($message);
+//            $messagesList[] = $message->id;
+//        }
+//        return response()->json(['success' => true, 'messages' => $messagesList]);
+//    }
+//
+//    private function unlinkFile($table, $file, $path=''): void
 //    {
 //        $fullPath = base_path('public/'.$path.$table[$file]);
 //        if (isset($table[$file]) && $table[$file] && file_exists($fullPath)) unlink($fullPath);
 //    }
 //
-//    private function checkTasksInWork($tasks,$warningTime)
+//    private function checkTasksInWork($tasks, $warningTime): void
 //    {
 //        foreach ($tasks as $task) {
 //            $timeType = 'выполнения';
@@ -660,7 +583,7 @@ trait HelperTrait
 //        }
 //    }
 //
-//    private function checkMessage($task,$messageStatus,$timeType,$timeStatus)
+//    private function checkMessage($task,$messageStatus,$timeType,$timeStatus): void
 //    {
 //        $messages = Message::where('task_id',$task->id)->get();
 //        $matches = false;

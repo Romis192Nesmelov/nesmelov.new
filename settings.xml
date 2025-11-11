@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <seo>
+        <title>Несмелов.рф</title>
+        <meta_description>Дизайн и айдентика, веб-технологии и полиграфия, верстка и пре-пресс, 3D-моделирование и анимация. Все в одном.</meta_description>
+        <meta_keywords/>
+        <meta_twitter_card/>
+        <meta_twitter_size/>
+        <meta_twitter_creator/>
+        <meta_og_url/>
+        <meta_og_type/>
+        <meta_og_title>Nesmelov and Company</meta_og_title>
+        <meta_og_description>Дизайн и айдентика, веб-технологии и полиграфия, верстка и пре-пресс, 3D-моделирование и анимация. Все в одном.</meta_og_description>
+        <meta_og_image>http://www.nesmelov.com/images/logo_square.jpg</meta_og_image>
+        <meta_robots/>
+        <meta_googlebot/>
+        <meta_google_site_verification/>
+    </seo>
+    <settings>
+        <tax>6</tax>
+        <tax1>6</tax1>
+        <tax2>4</tax2>
+        <my_status>1</my_status>
+        <my_percent>12</my_percent>
+        <fix_tax>36724</fix_tax>
+    </settings>
+    <requisites>
+        <address>117638, г. Москва, ул. Криворожская д.17 кв. 32</address>
+        <tin>772630830047</tin>
+        <bank_ie>АО «Альфа-Банк»</bank_ie>
+        <bank_se>АО «Альфа-Банк»</bank_se>
+        <bank_id_ie>044525593</bank_id_ie>
+        <bank_id_se>044525593</bank_id_se>
+        <checking_account_ie>40802 810 0026 4000 0266</checking_account_ie>
+        <checking_account_se>4081 7810 5041 9000 6193</checking_account_se>
+        <correspondent_account_ie>30101810200000000593</correspondent_account_ie>
+        <correspondent_account_se>30101810200000000593</correspondent_account_se>
+    <my_status>1</my_status><show_text>0</show_text></requisites>
+</root>

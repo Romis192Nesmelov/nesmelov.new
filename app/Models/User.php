@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -31,28 +32,28 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function tasks()
+    public function tasks(): HasMany
     {
-        return $this->hasMany('App\Task','user_id')->orderBy('id','desc');
+        return $this->hasMany(Task::class,'user_id')->orderBy('id','desc');
     }
 
-    public function ownTasks()
+    public function ownTasks(): HasMany
     {
-        return $this->hasMany('App\Task','owner_id')->orderBy('id','desc');
+        return $this->hasMany(Task::class,'owner_id')->orderBy('id','desc');
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
-        return $this->hasMany('App\Message')->orderBy('id','desc');
+        return $this->hasMany(Message::class)->orderBy('id','desc');
     }
 
-    public function bills()
+    public function bills(): HasMany
     {
-        return $this->hasMany('App\Bill')->orderBy('id','desc');
+        return $this->hasMany(Bill::class)->orderBy('id','desc');
     }
 
-    public function sentEmail()
+    public function sentEmail(): HasMany
     {
-        return $this->hasMany('App\SentEmail')->orderBy('id','desc');
+        return $this->hasMany(SentEmail::class)->orderBy('id','desc');
     }
 }

@@ -1,3 +1,13 @@
 {
-    "Login": "Логин"
+    "Login": "Логин",
+    "You do not have the rights to perform this operation!": "Для совершения данной операции у Вас нет прав!",
+    "Incorrect execution time!": "Не верное время выполнения!",
+    "Task status changed": "Изменен статус задачи подзадачи",
+    "The task execution time has been changed": "Изменено время выполнения задачи",
+    "Subtask execution time has been changed": "Изменено время выполнения подзадачи",
+    "The expected payment time has been changed": "Изменено время предполагаемой оплаты",
+    "Saving completed": "Сохранение произведено",
+    "Message from the Nesmelov&Co website": "Сообщение с сайта Nesmelov&Co",
+    "Main areas of professional activity": "Основные направления профессиональной деятельности",
+    "Works from the portfolio": "Работы из портфолио"
 }
