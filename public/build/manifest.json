@@ -1,0 +1,98 @@
+{
+  "resources/css/admin.css": {
+    "file": "assets/admin-XSURi2Rv.css",
+    "src": "resources/css/admin.css",
+    "isEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-uOWgh53N.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/auth.css": {
+    "file": "assets/auth-mYrTqANg.css",
+    "src": "resources/css/auth.css",
+    "isEntry": true
+  },
+  "resources/css/docs.css": {
+    "file": "assets/docs-C4rgCCa3.css",
+    "src": "resources/css/docs.css",
+    "isEntry": true
+  },
+  "resources/css/icons/glyphicons/glyphicons-halflings-regular.eot": {
+    "file": "assets/glyphicons-halflings-regular-BUJKDMgK.eot",
+    "src": "resources/css/icons/glyphicons/glyphicons-halflings-regular.eot"
+  },
+  "resources/css/icons/glyphicons/glyphicons-halflings-regular.svg": {
+    "file": "assets/glyphicons-halflings-regular-DSXsy3si.svg",
+    "src": "resources/css/icons/glyphicons/glyphicons-halflings-regular.svg"
+  },
+  "resources/css/icons/glyphicons/glyphicons-halflings-regular.ttf": {
+    "file": "assets/glyphicons-halflings-regular-DrwTMapi.ttf",
+    "src": "resources/css/icons/glyphicons/glyphicons-halflings-regular.ttf"
+  },
+  "resources/css/icons/glyphicons/glyphicons-halflings-regular.woff": {
+    "file": "assets/glyphicons-halflings-regular-BKjkU69z.woff",
+    "src": "resources/css/icons/glyphicons/glyphicons-halflings-regular.woff"
+  },
+  "resources/css/icons/glyphicons/glyphicons-halflings-regular.woff2": {
+    "file": "assets/glyphicons-halflings-regular-DzqM6ju8.woff2",
+    "src": "resources/css/icons/glyphicons/glyphicons-halflings-regular.woff2"
+  },
+  "resources/css/icons/summernote/summernote.eot": {
+    "file": "assets/summernote-C0TKNKkq.eot",
+    "src": "resources/css/icons/summernote/summernote.eot"
+  },
+  "resources/css/icons/summernote/summernote.ttf": {
+    "file": "assets/summernote-Dq2c9Deg.ttf",
+    "src": "resources/css/icons/summernote/summernote.ttf"
+  },
+  "resources/css/icons/summernote/summernote.woff": {
+    "file": "assets/summernote-Dh9ru_WK.woff",
+    "src": "resources/css/icons/summernote/summernote.woff"
+  },
+  "resources/js/admin.js": {
+    "file": "assets/admin-DcF4huEe.js",
+    "name": "admin",
+    "src": "resources/js/admin.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DJMJrZvH.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/docs.js": {
+    "file": "assets/docs-DG2RKuIZ.js",
+    "name": "docs",
+    "src": "resources/js/docs.js",
+    "isEntry": true
+  },
+  "resources/js/statistics.js": {
+    "file": "assets/statistics-BHgrTP5g.js",
+    "name": "statistics",
+    "src": "resources/js/statistics.js",
+    "isEntry": true
+  },
+  "storage/app/public/images/black.png": {
+    "file": "assets/black-BZcv51yz.png",
+    "src": "storage/app/public/images/black.png"
+  },
+  "storage/app/public/images/light-grey-bg.jpg": {
+    "file": "assets/light-grey-bg-BvXZ29bP.jpg",
+    "src": "storage/app/public/images/light-grey-bg.jpg"
+  },
+  "storage/app/public/images/main_bg.jpg": {
+    "file": "assets/main_bg-B2eEQPR5.jpg",
+    "src": "storage/app/public/images/main_bg.jpg"
+  },
+  "storage/app/public/images/main_bg_light.jpg": {
+    "file": "assets/main_bg_light-BU0EZ_Tj.jpg",
+    "src": "storage/app/public/images/main_bg_light.jpg"
+  },
+  "storage/app/public/images/white.png": {
+    "file": "assets/white-CIMuI07a.png",
+    "src": "storage/app/public/images/white.png"
+  }
+}
