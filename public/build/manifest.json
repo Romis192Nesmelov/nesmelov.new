@@ -39,6 +39,27 @@
     "file": "assets/glyphicons-halflings-regular-DzqM6ju8.woff2",
     "src": "resources/css/icons/glyphicons/glyphicons-halflings-regular.woff2"
   },
+  "resources/css/icons/icomoon/fonts/icomoon.eot": {
+    "file": "assets/icomoon-RabqmaB2.eot",
+    "src": "resources/css/icons/icomoon/fonts/icomoon.eot"
+  },
+  "resources/css/icons/icomoon/fonts/icomoon.svg": {
+    "file": "assets/icomoon-CK-ZaQjV.svg",
+    "src": "resources/css/icons/icomoon/fonts/icomoon.svg"
+  },
+  "resources/css/icons/icomoon/fonts/icomoon.ttf": {
+    "file": "assets/icomoon-B8MqBWp-.ttf",
+    "src": "resources/css/icons/icomoon/fonts/icomoon.ttf"
+  },
+  "resources/css/icons/icomoon/fonts/icomoon.woff": {
+    "file": "assets/icomoon-CPwfPeKl.woff",
+    "src": "resources/css/icons/icomoon/fonts/icomoon.woff"
+  },
+  "resources/css/icons/icomoon/styles.css": {
+    "file": "assets/styles-CTYVB9SP.css",
+    "src": "resources/css/icons/icomoon/styles.css",
+    "isEntry": true
+  },
   "resources/css/icons/summernote/summernote.eot": {
     "file": "assets/summernote-C0TKNKkq.eot",
     "src": "resources/css/icons/summernote/summernote.eot"

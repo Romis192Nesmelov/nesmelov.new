@@ -5,6 +5,7 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                'resources/css/icons/icomoon/styles.css',
                 'resources/css/auth.css',
                 'resources/css/admin.css',
                 'resources/css/app.css',
