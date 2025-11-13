@@ -25,5 +25,13 @@ Route::prefix('auth')->name('auth.')->controller(AuthController::class)->group(f
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
-    Route::get('/tasks', [UserController::class,'tasks'])->name('tasks');
+    Route::get('/', function () { return redirect(route('admin.tasks')); })->name('home');
+
+    Route::get('/tasks/{slug?}/{subSlug?}', [UserController::class,'tasks']);
+    Route::post('/task', 'UserController@editTask');
+    Route::post('/delete-task', 'UserController@deleteTask');
+
+    Route::get('/sub_task/{slug?}', [UserController::class,'subTask']);
+    Route::post('/sub_task', [UserController::class,'editSubTask']);
+    Route::post('/delete-sub-task', [UserController::class,'deleteSubTask']);
 });

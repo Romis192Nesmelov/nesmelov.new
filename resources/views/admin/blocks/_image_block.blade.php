@@ -15,7 +15,7 @@
                     </a>
                 @endif
             @else
-                <img src="/images/placeholder.jpg" />
+                <img src="{{ asset('storage/images/placeholder.jpg') }}" />
             @endif
             @include('admin.blocks._input_file_block', ['label' => '', 'name' =>  isset($name) && $name ? $name : 'image'])
         </div>

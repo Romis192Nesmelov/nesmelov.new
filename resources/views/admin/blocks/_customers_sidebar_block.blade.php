@@ -11,7 +11,7 @@
                 @endif
             @endforeach
         @else
-            <h6 class="text-center">Не найдено</h6>
+            <h6 class="text-center">{{ __('Not found') }}</h6>
         @endif
     </div>
 </div>

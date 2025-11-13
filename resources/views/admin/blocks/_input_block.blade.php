@@ -9,5 +9,5 @@
         type="{{ $type }}"
         class="form-control"
         placeholder="{{ isset($placeholder) && $placeholder ? $placeholder : '' }}"
-        value="{{ isset($value) && !count($errors) ? $value : (Session::has($name) ? Session::get($name) : old($name)) }}">
+        value="{{ isset($value) && !count($errors) ? $value : (session()->has($name) ? session()->get($name) : old($name)) }}">
 @include('admin.blocks._input_cover_block',['content' => ob_get_clean()])

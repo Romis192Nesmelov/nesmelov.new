@@ -1,5 +1,5 @@
 <?php
-$labels = ['bg-danger' => 'Задача просрочена','bg-grey-400' => 'Время на исходе','bg-blue' => 'Задача создана','bg-success-400' => 'Изменен статус'];
+$labels = ['bg-danger' => __('The task is overdue'),'bg-grey-400' => __('Time is running out'),'bg-blue' => __('Task has been created'),'bg-success-400' => __('Status changed')];
 $k = 1;
 foreach ($labels as $label => $description) {
     if ($status == $k) break;

@@ -1,5 +1,5 @@
-@include('blocks._modal_block',['id' => 'message', 'message' => (Session::has('message') ? Session::get('message') : '')])
-@if (Session::has('message'))
+@include('blocks._modal_block',['id' => 'message', 'message' => (session()->has('message') ? session()->get('message') : '')])
+@if (session()->has('message'))
     <script>$('#message').modal('show');</script>
-    <?php Session::forget('message'); ?>
+    <?php session()->forget('message'); ?>
 @endif

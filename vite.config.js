@@ -6,11 +6,11 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/icons/icomoon/styles.css',
+                'resources/css/icons/fontawesome/styles.min.css',
                 'resources/css/auth.css',
                 'resources/css/admin.css',
                 'resources/css/app.css',
                 'resources/css/docs.css',
-                'resources/js/admin.js',
                 'resources/js/app.js',
                 // 'resources/js/bootstrap.js',
                 'resources/js/docs.js',

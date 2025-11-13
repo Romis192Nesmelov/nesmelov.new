@@ -27,36 +27,27 @@ trait HelperTrait
 //    public array $breadcrumbs = [];
 //    public array $data = [];
 //
-//    public array $taskGetCondition = [
-//        'done' => 'Оплачено',
-//        'wait' => 'Завершено',
-//        'work' => 'В работе',
-//        'hold' => 'Отложено',
-//        'returned' => 'Доработка',
-//        'fake_made' => 'Фейк создан',
-//        'fake_done' => 'Фейк оплачен'
-//    ];
-//    public array $billsStatuses = ['Оплачен','Выставлен на всю сумму','Выставлен на часть суммы'];
-//    public array $incomeStatuses = ['Выплачено','Завершено','Предоплата'];
+
+
 //
-//    public string $validationPhone = 'regex:/^((\+)?(\d)(\s)?(\()?[0-9]{3}(\))?(\s)?([0-9]{3})(\-)?([0-9]{2})(\-)?([0-9]{2}))$/';
-//    public string $validationId = 'required|integer|exists:';
-//    public string $validationPassword = 'required|confirmed|min:3|max:50';
-//    public string $validationLoginPassword = 'required|min:3|max:50';
-//    public string $validationImage = 'mimes:jpeg|min:5|max:5000';
-//    public string $validationContactPerson = 'nullable|min:3|max:255';
-//    public string $validationEmail = 'nullable|email';
-//    public string $validationName = 'required|min:5|max:255';
-//    public string $validationValue = 'required|integer|max:2000000';
-//    public string $validationDate = 'required|regex:/^((\d){2}\/(\d){2}\/(\d){4})$/';
-//    public string $validationBillNumber = 'required|integer|min:1|unique:bills,number';
-//    public string $validationTaskId = 'required|integer|exists:tasks,id';
-//    public string $validationCustomerId = 'required|integer|exists:customers,id';
-//    public string $validationBankName = 'required|min:10|max:255';
-//    public string $validationBankId = 'required|size:9';
-//    public string $validationCheckingAccount = 'required|min:20|max:24';
-//    public string $validationCorrespondentAccount = 'required|min:20|max:24';
-//    public string $regYear = '/^(20(\d){2})$/';
+    public string $validationPhone = 'regex:/^((\+)?(\d)(\s)?(\()?[0-9]{3}(\))?(\s)?([0-9]{3})(\-)?([0-9]{2})(\-)?([0-9]{2}))$/';
+    public string $validationId = 'required|integer|exists:';
+    public string $validationPassword = 'required|confirmed|min:3|max:50';
+    public string $validationLoginPassword = 'required|min:3|max:50';
+    public string $validationImage = 'mimes:jpeg|min:5|max:5000';
+    public string $validationContactPerson = 'nullable|min:3|max:255';
+    public string $validationEmail = 'nullable|email';
+    public string $validationName = 'required|min:5|max:255';
+    public string $validationValue = 'required|integer|max:2000000';
+    public string $validationDate = 'required|regex:/^((\d){2}\/(\d){2}\/(\d){4})$/';
+    public string $validationBillNumber = 'required|integer|min:1|unique:bills,number';
+    public string $validationTaskId = 'required|integer|exists:tasks,id';
+    public string $validationCustomerId = 'required|integer|exists:customers,id';
+    public string $validationBankName = 'required|min:10|max:255';
+    public string $validationBankId = 'required|size:9';
+    public string $validationCheckingAccount = 'required|min:20|max:24';
+    public string $validationCorrespondentAccount = 'required|min:20|max:24';
+
 
 
 //    public function saveCompleteMessage(): void
@@ -64,39 +55,11 @@ trait HelperTrait
 //        Session::flash('message',__('Saving completed'));
 //    }
 //
-//    public function getStatuses(): void
-//    {
-//        $this->data['statuses'] = [];
-//        $key = 1;
-//        foreach ($this->taskGetCondition as $description) {
-//            $this->data['statuses'][] = ['val' => $key, 'descript' => $description];
-//            if ($key == 5 && ( !isset($this->data['task']) || (isset($this->data['task']) && $this->data['task']->status <= 5) ) ) break;
-//            else $key++;
-//        }
-//    }
-//
-//    public function getStatusesSimple(): void
-//    {
-//        $this->data['statuses_simple'] = [];
-//        foreach ($this->taskGetCondition as $description) {
-//            $this->data['statuses_simple'][] = $description;
-//        }
-//    }
 
-//    public function getBackUri($path)
-//    {
-//        Session::put('back_uri',$path);
-//    }
-
-//    public function getSidebar(): void
-//    {
-//        $this->data['sidebar'] = count($this->data['tasks']) || (isset($this->data['own_tasks']) && count($this->data['own_tasks']));
-//    }
 //
-//    public function getFixTax(): void
-//    {
-//        $this->data['fix_tax'] = FixTax::query()->where('year', $this->data['year'] ?? date('Y'))->first();
-//    }
+
+
+
 //
 //    public function getTaskValidationSomeFields($customerId, $validationArr, $timeFields): array
 //    {
@@ -120,13 +83,7 @@ trait HelperTrait
 //        return $status;
 //    }
 //
-//    protected function getTasksInWork($status=null): void
-//    {
-//        if ((int)$this->data['year'] == (int)date('Y') && (!$status || $status == 3)) {
-//            if (Gate::allows('is-admin')) $this->data['work_tasks'] = Task::query()->where('status',3)->count();
-//            else $this->data['work_tasks'] = Task::query()->where('status',3)->where('user_id',Auth::id())->orWhere('owner_id',Auth::id())->count();
-//        }
-//    }
+
 //
 //    public function getBaseFieldsMailMessage($task): array
 //    {
@@ -210,16 +167,7 @@ trait HelperTrait
 //        return $fields;
 //    }
 
-//    protected function checkTaskMessages()
-//    {
-//        foreach ($this->data['task']->messages as $message) {
-//            if ($message->owner && $message->user) {
-//                if (Gate::allows('owner-or-user-message-not-admin',$message)) {
-//                    $this->setSeenMessage($message);
-//                }
-//            } else $message->delete();
-//        }
-//    }
+
 
 //    protected function checkTaskEdit($task)
 //    {
@@ -340,71 +288,6 @@ trait HelperTrait
 //        dispatch(new SendMessage($mailTo, $copyMail, $template, $fields, $pathToFile));
 //    }
 //
-//    public function showView($view): View
-//    {
-//        $usersSubmenu = [];
-//        $users = User::all();
-//        foreach ($users as $user) {
-//            $usersSubmenu[] = ['href' => '?id='.$user->id, 'name' => $user->name];
-//        }
-//
-//        $tasksSubmenu = [];
-//        foreach ($this->taskGetCondition as $href => $name) {
-//            $tasksSubmenu[] = ['href' => $href, 'name' => $name];
-//        }
-//
-//        $menus = [
-//            ['href' => 'users', 'name' => (Gate::allows('is-admin') ? 'Пользователи' : 'Профиль пользователя'), 'icon' => (Gate::allows('is-admin') ? 'icon-user' : 'icon-users'), 'submenu' => $usersSubmenu],
-//            ['href' => 'messages', 'name' => 'Сообщения', 'icon' => 'icon-bubbles4'],
-//            ['href' => 'tasks', 'name' => 'Задачи', 'icon' => 'icon-calculator2', 'submenu' => $tasksSubmenu]
-//        ];
-//
-//        if (Gate::allows('is-admin')) {
-//            $menus[] = ['href' => 'statistics', 'name' => 'Статистика', 'icon' => 'icon-chart'];
-//
-//            $chapters = Branch::all();
-//
-//            $submenuChapters = [];
-//            foreach ($chapters as $k => $chapter) {
-//                $submenuChapters[] = ['href' => $chapter->eng, 'name' => $chapter->rus];
-//                if (!$k) $submenuChapters[] = ['href' => 'news', 'name' => 'Новости'];
-//            }
-//
-//            $menus[] = ['href' => 'seo', 'name' => 'SEO', 'icon' => 'icon-price-tags'];
-//            $menus[] = ['href' => 'chapters', 'name' => 'Разделы', 'icon' => 'icon-files-empty2', 'submenu' => $submenuChapters];
-//            $menus[] = ['href' => 'questions', 'name' => 'Вопросы-ответы', 'icon' => 'icon-question4'];
-//            $menus[] = ['href' => 'sent-emails', 'name' => 'Отправленные', 'icon' => 'icon-mail-read'];
-//            $menus[] = ['href' => 'settings', 'name' => 'Настройки', 'icon' => 'icon-gear position-left'];
-//        }
-//
-//        $menus[] = ['href' => 'customers', 'name' => 'Клиенты', 'icon' => 'icon-theater'];
-//        $allBills = Gate::allows('is-admin') ? Bill::all() : Bill::where('user_id',Auth::id())->get();
-//        $billsSubMenu = [];
-//        $billsCustomers = [];
-//        foreach ($allBills as $bill) {
-//            $customerName = $bill->task->customer->name;
-//            if (!in_array($customerName,$billsCustomers)) {
-//                $billsSubMenu[] = ['href' => $bill->task->customer->slug, 'name' => $customerName];
-//                $billsCustomers[] = $customerName;
-//            }
-//        }
-//        $menus[] = ['href' => 'bills', 'name' => 'Счета', 'icon' => 'fa fa-ticket', 'submenu' => $billsSubMenu];
-//
-//        $banks = Bank::all();
-//        $subMenuBanks = [];
-//        foreach ($banks as $bank) {
-//            $subMenuBanks[] = ['href' => '?id='.$bank->id, 'name' => $bank->name];
-//        }
-//
-//        $menus[] = ['href' => 'banks', 'name' => 'Банки', 'icon' => 'icon-library2', 'submenu' => $subMenuBanks];
-//        $this->data['messages'] = $this->getMessages();
-//
-//        return view('admin.'.$view, [
-//            'breadcrumbs' => $this->breadcrumbs,
-//            'data' => $this->data,
-//            'menus' => $menus
-//        ]);
-//    }
 
 //    public function wrongCompletionTime()
 //    {

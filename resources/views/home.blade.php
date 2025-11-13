@@ -7,18 +7,18 @@
         @foreach($data['branches'] as $k => $branch)
             @include('blocks._big_icon_block', [
                 'icon' => $branch->icon,
-                'href' => $branch->eng,
+                'href' => $branch->en,
                 'subscribe' => $branch->description
             ])
         @endforeach
     </x-gray_block>
 
     @foreach($data['branches'] as $k => $branch)
-        <a name="{{ $branch->eng }}"></a>
+        <a name="{{ $branch->en }}"></a>
         <div class="image-block" style="background-image: url('{{ asset('/storage/'.$branch->image) }}')"></div>
 
         @if (count($branch->works))
-            <x-gray_block head="{{ __('Works from the portfolio').' «'.$branch->rus.'»' }}" scroll="{{ $branch->eng }}">
+            <x-gray_block head="{{ __('Works from the portfolio').' «'.$branch->ru.'»' }}" scroll="{{ $branch->en }}">
                 <div class="portfolio">
                     @foreach($branch->works as $k => $work)
                         @if ($work->active)

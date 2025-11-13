@@ -1,4 +1,10 @@
 {
+  "resources/ckeditor/ckeditor.js": {
+    "file": "assets/ckeditor-DU_6Urlt.js",
+    "name": "ckeditor",
+    "src": "resources/ckeditor/ckeditor.js",
+    "isEntry": true
+  },
   "resources/css/admin.css": {
     "file": "assets/admin-XSURi2Rv.css",
     "src": "resources/css/admin.css",
@@ -17,6 +23,31 @@
   "resources/css/docs.css": {
     "file": "assets/docs-C4rgCCa3.css",
     "src": "resources/css/docs.css",
+    "isEntry": true
+  },
+  "resources/css/icons/fontawesome/fonts/fontawesome-webfont.eot": {
+    "file": "assets/fontawesome-webfont-C7hRAymh.eot",
+    "src": "resources/css/icons/fontawesome/fonts/fontawesome-webfont.eot"
+  },
+  "resources/css/icons/fontawesome/fonts/fontawesome-webfont.svg": {
+    "file": "assets/fontawesome-webfont-DZsvXNup.svg",
+    "src": "resources/css/icons/fontawesome/fonts/fontawesome-webfont.svg"
+  },
+  "resources/css/icons/fontawesome/fonts/fontawesome-webfont.ttf": {
+    "file": "assets/fontawesome-webfont-DYfWyl7r.ttf",
+    "src": "resources/css/icons/fontawesome/fonts/fontawesome-webfont.ttf"
+  },
+  "resources/css/icons/fontawesome/fonts/fontawesome-webfont.woff": {
+    "file": "assets/fontawesome-webfont-D1RX9NVh.woff",
+    "src": "resources/css/icons/fontawesome/fonts/fontawesome-webfont.woff"
+  },
+  "resources/css/icons/fontawesome/fonts/fontawesome-webfont.woff2": {
+    "file": "assets/fontawesome-webfont-BBOCxDGX.woff2",
+    "src": "resources/css/icons/fontawesome/fonts/fontawesome-webfont.woff2"
+  },
+  "resources/css/icons/fontawesome/styles.min.css": {
+    "file": "assets/styles-Cc7NitkR.css",
+    "src": "resources/css/icons/fontawesome/styles.min.css",
     "isEntry": true
   },
   "resources/css/icons/glyphicons/glyphicons-halflings-regular.eot": {
@@ -88,6 +119,24 @@
     "file": "assets/docs-DG2RKuIZ.js",
     "name": "docs",
     "src": "resources/js/docs.js",
+    "isEntry": true
+  },
+  "resources/js/echarts/lines_areas.js": {
+    "file": "assets/lines_areas-D1od7rjM.js",
+    "name": "lines_areas",
+    "src": "resources/js/echarts/lines_areas.js",
+    "isEntry": true
+  },
+  "resources/js/pages/sidebar_detached_sticky_custom.js": {
+    "file": "assets/sidebar_detached_sticky_custom-B1VL36pu.js",
+    "name": "sidebar_detached_sticky_custom",
+    "src": "resources/js/pages/sidebar_detached_sticky_custom.js",
+    "isEntry": true
+  },
+  "resources/js/plugins/visualization/echarts/echarts.js": {
+    "file": "assets/echarts-Bf3iVtI_.js",
+    "name": "echarts",
+    "src": "resources/js/plugins/visualization/echarts/echarts.js",
     "isEntry": true
   },
   "resources/js/statistics.js": {

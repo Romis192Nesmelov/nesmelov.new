@@ -2,8 +2,8 @@
     <div class="panel-body">
         <div class="panel-heading">
             <h3 class="panel-title pull-left">{{ $head }}</h3>
-            @if ($useAddButton && Auth::user()->is_admin && $data['year'] == date('Y'))
-                @include('admin.blocks._add_button_block',['href' => 'tasks/add', 'text' => 'Добавить задачу'])
+            @if ($useAddButton && auth()->user()->is_admin && $data['year'] == date('Y'))
+                @include('admin.blocks._add_button_block',['href' => 'tasks/add', 'text' => __('Add a task')])
             @endif
         </div>
     </div>
@@ -69,11 +69,11 @@
                     }
 
                     if ($task->status == 1 || $task->status == 7 || $task->paid_off) {
-                        $taskValue = Helper::calculateOverTaskVal($task);
-                        $taskValueWithoutAll = Helper::calculateOverTaskVal($task, true, true, $task->use_duty, true);
+                        $taskValue = calculateOverTaskVal($task);
+                        $taskValueWithoutAll = calculateOverTaskVal($task, true, true, $task->use_duty, true);
 
-                        $taskDuty = $task->use_duty ? Helper::calculateTaskDuty($taskValue, $task) : 0;
-                        $taskPercents = $task->percents ? Helper::calculateTaskPercents($taskValue - $taskDuty, $task->percents) : 0;
+                        $taskDuty = $task->use_duty ? calculateTaskDuty($taskValue, $task) : 0;
+                        $taskPercents = $task->percents ? calculateTaskPercents($taskValue - $taskDuty, $task->percents) : 0;
                         if (count($task->subTasks) && $presentSubTasks) {
                             foreach ($task->subTasks as $subTask) {
                                 if (
@@ -81,9 +81,9 @@
                                     && ($subTask->status == 1 || $subTask->status == 7)
                                     && date('Y',$subTask->completion_time) == date('Y')
                                     ) {
-                                        $subTaskValueWithoutAll = Helper::calculateOverTaskVal($subTask, true, false, $task->use_duty, true);
-                                        $subTaskDuty = $task->use_duty ? Helper::calculateTaskDuty($subTask->value, $task) : 0;
-                                        $taskPercents += $subTask->percents ? Helper::calculateTaskPercents($subTaskValueWithoutAll - $subTaskDuty, $subTask->percents) : 0;
+                                        $subTaskValueWithoutAll = calculateOverTaskVal($subTask, true, false, $task->use_duty, true);
+                                        $subTaskDuty = $task->use_duty ? calculateTaskDuty($subTask->value, $task) : 0;
+                                        $taskPercents += $subTask->percents ? calculateTaskPercents($subTaskValueWithoutAll - $subTaskDuty, $subTask->percents) : 0;
                                 }
                             }
                         }
@@ -116,7 +116,7 @@
             ])
 
             @include('admin.blocks._sum_tasks_block',[
-                'addTotalDesk' => 'общая прибыль',
+                'addTotalDesk' => __('Total profit'),
                 'showAverageIncome' => true,
                 'sum' => $totalSum,
                 'duty' => $totalDuty,

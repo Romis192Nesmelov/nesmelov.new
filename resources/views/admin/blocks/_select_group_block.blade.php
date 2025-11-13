@@ -1,4 +1,4 @@
-<div class="{{ isset($addClass) ? $addClass : '' }} form-group has-feedback {{ count($errors) && $errors->has($name) ? 'has-error' : '' }}">
+<div class="{{ $addClass ?? '' }} form-group has-feedback {{ count($errors) && $errors->has($name) ? 'has-error' : '' }}">
     @if (isset($label))
         <label class="control-label col-md-12 text-semibold">{{ $label }}</label>
     @endif

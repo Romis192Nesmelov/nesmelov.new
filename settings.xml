@@ -35,5 +35,6 @@
         <checking_account_se>4081 7810 5041 9000 6193</checking_account_se>
         <correspondent_account_ie>30101810200000000593</correspondent_account_ie>
         <correspondent_account_se>30101810200000000593</correspondent_account_se>
-    <my_status>1</my_status><show_text>0</show_text></requisites>
+        <my_status>1</my_status>
+    </requisites>
 </root>

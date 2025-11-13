@@ -1,4 +1,4 @@
 @include('admin.blocks._extended_status_block',[
     'status' => $bill->signing,
-    'descriptions' => ['Подписан с одной стороны','На подписании второй стороны','Подписан обеими сторонами']
+    'descriptions' => [__('Signed on one side'),__('At the signing of the second party'),__('Signed by both sides')]
 ])

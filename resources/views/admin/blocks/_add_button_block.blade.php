@@ -1,1 +1,1 @@
-<a href="/admin/{{ $href }}">@include('admin.blocks._button_block', ['type' => 'submit', 'icon' => 'icon-database-add', 'text' => $text, 'addClass' => (isset($addClass) ? $addClass.' ' : '').'pull-right'])</a>
+<a href="{{ url('/admin/'.$href) }}">@include('admin.blocks._button_block', ['type' => 'submit', 'icon' => 'icon-database-add', 'text' => $text, 'addClass' => (isset($addClass) ? $addClass.' ' : '').'pull-right'])</a>

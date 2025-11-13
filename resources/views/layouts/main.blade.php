@@ -7,12 +7,12 @@
     <meta name="yandex-verification" content="e4261c36119b5851" />
     <meta name="google-site-verification" content="gzzatjygFT8h71fZtOvRF0DweX34Da8kJIEC5mrJSEk" />
 
-    <title>{{ $data['seo']['title'] }}</title>
+    <title>{{ getSeoTags()['title'] }}</title>
     @include('blocks._favicons_block')
 
-    @foreach($metas as $meta => $params)
-        @if ($data['seo'][$meta])
-            <meta {{ $params['name'] ? 'name='.$params['name'] : 'property='.$params['property'] }} content="{{ $data['seo'][$meta] }}">
+    @foreach(getMetas() as $meta => $params)
+        @if (getSeoTags()[$meta])
+            <meta {{ $params['name'] ? 'name='.$params['name'] : 'property='.$params['property'] }} content="{{ getSeoTags()[$meta] }}">
         @endif
     @endforeach
 
@@ -30,7 +30,7 @@
 <footer>
     <div class="container text-center">
         <div class="logo"><img src="{{ asset('storage/images/logo.jpg') }}"></div>
-        <p class="small">©Несмелов.рф {{ date('Y') }}г.<br>{{ $data['seo']['meta_description'] }}</p>
+        <p class="small">©Несмелов.рф {{ date('Y') }}г.<br>{{ getSeoTags()['meta_description'] }}</p>
     </div>
 </footer>
 

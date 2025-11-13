@@ -1,8 +1,8 @@
 <tr>
-    <th class="text-center">Название</th>
-    <th class="text-center">Стоимость</th>
-    <th class="text-center">Начало работы</th>
-    <th class="text-center">Завершение работы</th>
-    <th class="text-center">Статус</th>
-    <th class="delete">Удалить</th>
+    <th class="text-center">{{ __('Name') }}</th>
+    <th class="text-center">{{ __('Price') }}</th>
+    <th class="text-center">{{ __('Getting started') }}</th>
+    <th class="text-center">{{ __('End of work') }}</th>
+    <th class="text-center">{{ __('Status') }}</th>
+    <th class="delete">{{ __('Delete') }}</th>
 </tr>

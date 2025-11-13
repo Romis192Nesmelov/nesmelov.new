@@ -1,12 +1,12 @@
 <table class="table datatable-basic">
     <tr>
-        <th class="text-center">№</th>
-        <th class="text-center">Задача</th>
-        <th class="text-center">Дата выставления</th>
-        {{--<th class="text-center">Создан</th>--}}
-        <th class="text-center">Подписан</th>
-        <th class="text-center">Статус</th>
-        <th class="delete">Удалить</th>
+        <th class="text-center">{{ __('#') }}</th>
+        <th class="text-center">{{ __('Task') }}</th>
+        <th class="text-center">{{ __('Date of issue') }}</th>
+        {{--<th class="text-center">{{ __('Created') }}</th>--}}
+        <th class="text-center">{{ __('Signed') }}</th>
+        <th class="text-center">{{ __('Status') }}</th>
+        <th class="delete">{{ __('Delete') }}</th>
     </tr>
     @foreach ($bills as $bill)
         @if (

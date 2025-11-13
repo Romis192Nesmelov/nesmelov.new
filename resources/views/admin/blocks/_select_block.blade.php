@@ -1,4 +1,4 @@
-<div class="form-group has-feedback has-feedback-left {{ count($errors) && $errors->has($name) ? "has-error" : '' }} {{ isset($addClass) ? $addClass : '' }}" {!! isset($attrString) ? $attrString : '' !!}>
+<div class="form-group has-feedback has-feedback-left {{ count($errors) && $errors->has($name) ? "has-error" : '' }} {{ $addClass ?? '' }}" {!! $attrString ?? '' !!}>
     @if (isset($label))
         <div class="description input-label">{{ $label }}</div>
     @endif

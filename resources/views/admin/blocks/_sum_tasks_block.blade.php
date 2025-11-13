@@ -1,13 +1,13 @@
 <div class="total-line text-grey-300">
-    Итого {{ isset($addTotalDesk) ? '('.$addTotalDesk.')' : '' }}: <b>{{ round($sum - (isset($showAverageIncome) && $showAverageIncome ? ( (int)Settings::getSettings()['my_status'] ? (int)Settings::getSettings()['fix_tax'] : 0 ) : 0)) }}₽</b><br>
-    @if (Auth::user()->is_admin)
+    {{ __('Total').' '.(isset($addTotalDesk) ? '('.$addTotalDesk.')' : '') }}: <b>{{ round($sum - (isset($showAverageIncome) && $showAverageIncome ? ( (int)getSettings()['my_status'] ? (int)getSettings()['fix_tax'] : 0 ) : 0)) }}₽</b><br>
+    @if (auth()->user()->is_admin)
         @if (isset($showAverageIncome) && $showAverageIncome)
-            Средний доход в месяц: <b>{{ round( ($sum - ( ((int)Settings::getSettings()['my_status'] || $data['fix_tax']->year == (int)date('Y')) ? $data['fix_tax']->value : 0 ) ) / ($data['year'] == date('Y') ? (int)date('n') : 12) ) }}₽</b><br>
-            @if ((int)Settings::getSettings()['my_status'])
-                Фикс. ПФРФ: <b>{{ Settings::getSettings()['fix_tax'] }}₽</b><br>
+            {{ __('Average monthly income:') }} <b>{{ round( ($sum - ( ((int)getSettings()['my_status'] || $data['fix_tax']->year == (int)date('Y')) ? $data['fix_tax']->value : 0 ) ) / ($data['year'] == date('Y') ? (int)date('n') : 12) ) }}₽</b><br>
+            @if ((int)getSettings()['my_status'])
+                {{ __('Fix PFRF') }}: <b>{{ getSettings()['fix_tax'] }}₽</b><br>
             @endif
         @endif
-        Налоги: <b>{{ $duty ? round($duty) : 0 }}₽</b><br>
+        {{ __('Taxes:') }} <b>{{ $duty ? round($duty) : 0 }}₽</b><br>
     @endif
-    Сторонний %: <b>{{ round($percents) }}₽</b>
+    {{ __('Third-party %:') }} <b>{{ round($percents) }}₽</b>
 </div>
