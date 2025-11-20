@@ -1,17 +1,11 @@
 {
-  "resources/ckeditor/ckeditor.js": {
-    "file": "assets/ckeditor-DU_6Urlt.js",
-    "name": "ckeditor",
-    "src": "resources/ckeditor/ckeditor.js",
-    "isEntry": true
-  },
   "resources/css/admin.css": {
-    "file": "assets/admin-XSURi2Rv.css",
+    "file": "assets/admin-fZg7gXi_.css",
     "src": "resources/css/admin.css",
     "isEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-uOWgh53N.css",
+    "file": "assets/app-M84cSDZz.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -103,12 +97,6 @@
     "file": "assets/summernote-Dh9ru_WK.woff",
     "src": "resources/css/icons/summernote/summernote.woff"
   },
-  "resources/js/admin.js": {
-    "file": "assets/admin-DcF4huEe.js",
-    "name": "admin",
-    "src": "resources/js/admin.js",
-    "isEntry": true
-  },
   "resources/js/app.js": {
     "file": "assets/app-DJMJrZvH.js",
     "name": "app",
@@ -119,24 +107,6 @@
     "file": "assets/docs-DG2RKuIZ.js",
     "name": "docs",
     "src": "resources/js/docs.js",
-    "isEntry": true
-  },
-  "resources/js/echarts/lines_areas.js": {
-    "file": "assets/lines_areas-D1od7rjM.js",
-    "name": "lines_areas",
-    "src": "resources/js/echarts/lines_areas.js",
-    "isEntry": true
-  },
-  "resources/js/pages/sidebar_detached_sticky_custom.js": {
-    "file": "assets/sidebar_detached_sticky_custom-B1VL36pu.js",
-    "name": "sidebar_detached_sticky_custom",
-    "src": "resources/js/pages/sidebar_detached_sticky_custom.js",
-    "isEntry": true
-  },
-  "resources/js/plugins/visualization/echarts/echarts.js": {
-    "file": "assets/echarts-Bf3iVtI_.js",
-    "name": "echarts",
-    "src": "resources/js/plugins/visualization/echarts/echarts.js",
     "isEntry": true
   },
   "resources/js/statistics.js": {
