@@ -20,6 +20,10 @@ class SubTask extends Model
         'task_id',
     ];
 
+    public static function findOrFail(mixed $id)
+    {
+    }
+
     public function task(): BelongsTo
     {
         return $this->belongsTo(Task::class);

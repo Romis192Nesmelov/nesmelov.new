@@ -10203,23 +10203,23 @@ $(document).ready(function () {
     bindSeenAll();
 
     // Getting new messages
-    setInterval(function () {
-        $.post('/admin/get-new-messages',{
-            '_token': window.token
-        }, function (data) {
-            if (data.success) {
-                let countContainer = $('#message-counter');
-                if (!countContainer.length) {
-                    $('#message-counter-container').append(
-                        $('<span></span>').attr('id','message-counter').addClass('badge bg-warning-400')
-                    );
-                    newMessages(data.counter, data.messages);
-                } else if (parseInt(countContainer.html()) != data.counter) {
-                    newMessages(data.counter, data.messages);
-                }
-            }
-        });
-    }, 30000);
+    // setInterval(function () {
+    //     $.post('/admin/get-new-messages',{
+    //         '_token': window.token
+    //     }, function (data) {
+    //         if (data.success) {
+    //             let countContainer = $('#message-counter');
+    //             if (!countContainer.length) {
+    //                 $('#message-counter-container').append(
+    //                     $('<span></span>').attr('id','message-counter').addClass('badge bg-warning-400')
+    //                 );
+    //                 newMessages(data.counter, data.messages);
+    //             } else if (parseInt(countContainer.html()) != data.counter) {
+    //                 newMessages(data.counter, data.messages);
+    //             }
+    //         }
+    //     });
+    // }, 30000);
 
     // Forming CSV
     $('button.form-csv').click(function () {

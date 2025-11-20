@@ -32944,7 +32944,7 @@ video  {
 
 .navbar-default {
     width: 100%;
-    padding: 10px;
+    padding: 15px 10px 10px;
     position: fixed;
     background: url("../../public/storage/images/black.png") repeat;
     border-bottom: 1px solid grey;
@@ -32981,16 +32981,25 @@ video  {
     margin-top: -3px;
 }
 
-.feedback {
-    margin-top: 10px;
+.feedback,
+.lang {
+    margin-top: 15px;
     position: fixed;
-    right: 45px;
     z-index: 999;
+}
+
+.feedback {
+    right: 50px;
+}
+
+.lang {
+    right: 10px;
 }
 
 .nav > li > a,
 .dropdown-menu > li > a,
-.feedback > a {
+.feedback > a,
+.lang > a {
     font-family: Optima, sans-serif;
     padding: 0 15px;
     font-size: 13px;

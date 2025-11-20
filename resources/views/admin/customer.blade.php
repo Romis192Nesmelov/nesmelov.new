@@ -107,7 +107,7 @@
                             ])
 
                             @include('admin.blocks._input_block', [
-                                'addClass' => 'hiding col-md-4 col-sm-12 col-xs-12'.(isPrivatePersonTheCustomer($data) ? ' hidden' : ''),
+                                'addClass' => 'hiding col-md-6 col-sm-12 col-xs-12'.(isPrivatePersonTheCustomer($data) ? ' hidden' : ''),
                                 'label' => __('Director'),
                                 'name' => 'director',
                                 'type' => 'text',
@@ -117,7 +117,7 @@
                             ])
 
                             @include('admin.blocks._input_block', [
-                                'addClass' => 'hiding col-md-4 col-sm-12 col-xs-12'.(isPrivatePersonTheCustomer($data) ? ' hidden' : ''),
+                                'addClass' => 'hiding col-md-6 col-sm-12 col-xs-12'.(isPrivatePersonTheCustomer($data) ? ' hidden' : ''),
                                 'label' => __('Director (genitive case)'),
                                 'name' => 'director_case',
                                 'type' => 'text',
@@ -297,7 +297,7 @@
                             }
                         }
                         ?>
-                        @include('admin.blocks._tasks_table_item_block',['task' => $task])
+                        @include('admin.blocks._tasks_table_item_block',['uri' => 'tasks', 'task' => $task])
                     @endforeach
                 @include('admin.blocks._end_tasks_table_block', ['customer' => $data['customer']->name, 'slug' => $data['customer']->slug, 'useDuty' => $task->use_duty])
     @endif

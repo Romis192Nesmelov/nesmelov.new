@@ -1,0 +1,1 @@
+к Договору №{{ $task->customer->contract_number ?  : '________' }} от {{ $task->customer->contract_date ? view('docs.blocks._date_block',['date' => $task->customer->contract_date])->render() : view('docs.blocks._unknown_date_block')->render() }} на выполнение работ

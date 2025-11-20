@@ -22,7 +22,7 @@
                 </tr>
                 @foreach ($data['customers'] as $customer)
                     <tr role="row" id="{{ 'customer_'.$customer->id }}">
-                        <td class="text-center head"><a href="/admin/customers/{{ $customer->slug }}">{{ $customer->name }}</a></td>
+                        <td class="text-center head"><a href="{{ url('/admin/customers/'.$customer->slug) }}">{{ $customer->name }}</a></td>
                         <td class="text-center head">@include('admin.blocks._email_href_block',['email' => $customer->email])</td>
                         <td class="text-center">@include('admin.blocks._phone_href_block',['phone' => $customer->phone])</td>
                         <td class="text-center">{{ $customer->contact_person }}</td>

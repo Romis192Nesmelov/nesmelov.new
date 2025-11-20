@@ -21,7 +21,7 @@
                 @foreach ($data['emails'] as $email)
                     <tr role="row" id="{{ 'email_'.$email->id }}">
                         <td class="id">{{ $email->id }}</td>
-                        <td class="text-center"><a href="/admin/sent-emails?id={{ $email->id }}">{{ $email->email }}</a></td>
+                        <td class="text-center"><a href="{{ url('/admin/sent-emails?id='.$email->id) }}">{{ $email->email }}</a></td>
                         <td class="text-center">@include('admin.blocks._cropped_content_block',['croppingContent' => $email->html, 'length' => 100])</td>
                         <td class="text-center">@include('admin.blocks._email_user_block',['email' => $email])</td>
                         <td class="text-center">{{ $email->created_at }}</td>

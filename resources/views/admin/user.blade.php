@@ -41,17 +41,6 @@
                                 'value' => isset($data['user']) ? $data['user']->phone : ''
                             ])
 
-                            @if (isset($data['user']) && !auth()->user()->is_admin)
-                                @include('admin.blocks._input_block', [
-                                    'label' => 'Старый пароль',
-                                    'name' => 'old_password',
-                                    'type' => 'password',
-                                    'max' => 50,
-                                    'placeholder' => __('The user\'s old password'),
-                                    'value' => ''
-                                ])
-                            @endif
-
                             <div class="panel panel-flat">
                                 @if (isset($data['user']))
                                     <div class="panel-heading">
@@ -60,6 +49,16 @@
                                 @endif
 
                                 <div class="panel-body">
+                                    @if (isset($data['user']) && !auth()->user()->is_admin)
+                                        @include('admin.blocks._input_block', [
+                                            'label' => 'Старый пароль',
+                                            'name' => 'old_password',
+                                            'type' => 'password',
+                                            'max' => 50,
+                                            'placeholder' => __('The user\'s old password'),
+                                            'value' => ''
+                                        ])
+                                    @endif
                                     @include('admin.blocks._input_block', [
                                         'label' => __('The user\'s new password'),
                                         'name' => 'password',

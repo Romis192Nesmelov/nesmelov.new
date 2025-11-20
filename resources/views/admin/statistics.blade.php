@@ -11,18 +11,6 @@
 
     <div class="panel panel-flat">
         <div class="panel-heading">
-            <h1 class="panel-title pull-left">{{ __('Statistics (months)') }}</h1>
-        </div>
-        <div class="panel-body">
-            <form class="form-horizontal" enctype="multipart/form-data" action="{{ url('/admin/statistics/'.$data['year']) }}" method="get">
-                @include('admin.blocks._slider_block',['sliderName' => 'slider-months', 'sliderId' => 'slider-statistics'])
-                @include('admin.blocks._button_block', ['type' => 'submit', 'icon' => 'icon-database-refresh', 'text' => 'Обновить', 'addClass' => 'pull-right'])
-            </form>
-        </div>
-    </div>
-
-    <div class="panel panel-flat">
-        <div class="panel-heading">
             <h3 class="panel-title pull-left">{{ __('Issue statistics') }}</h3>
             @include('admin.blocks._heading_elements_block')
         </div>
@@ -72,7 +60,7 @@
         </div>
         <div class="panel-body">
             @include('admin.blocks._tasks_table_block', [
-                'head' => 'Задачи',
+                'head' => __('Tasks'),
                 'prefixAnchor' => 'user',
                 'tasks' => $data['tasks'],
                 'useAddButton' => false,

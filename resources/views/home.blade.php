@@ -7,23 +7,23 @@
         @foreach($data['branches'] as $k => $branch)
             @include('blocks._big_icon_block', [
                 'icon' => $branch->icon,
-                'href' => $branch->en,
-                'subscribe' => $branch->description
+                'href' => $branch->slug,
+                'subscribe' => $branch['description_'.app()->getLocale()]
             ])
         @endforeach
     </x-gray_block>
 
     @foreach($data['branches'] as $k => $branch)
-        <a name="{{ $branch->en }}"></a>
-        <div class="image-block" style="background-image: url('{{ asset('/storage/'.$branch->image) }}')"></div>
+        <a name="{{ $branch->slug }}"></a>
+        <div class="image-block" style="background-image: url('{{ asset($branch->image) }}')"></div>
 
         @if (count($branch->works))
-            <x-gray_block head="{{ __('Works from the portfolio').' «'.$branch->ru.'»' }}" scroll="{{ $branch->en }}">
+            <x-gray_block head="{{ __('Works from the portfolio').' «'.$branch[app()->getLocale()].'»' }}" scroll="{{ $branch->slug }}">
                 <div class="portfolio">
                     @foreach($branch->works as $k => $work)
                         @if ($work->active)
                             <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-                                <a href="{{ $work->url ?? asset('storage/'.$work->full) }}" {{ $work->url ? 'target=_blank' : 'class=img-preview' }} title="{{ $work->description }}"><img src="{{ asset('storage/'.$work->preview) }}" /></a>
+                                <a href="{{ $work->url ? $work->url : asset($work->full) }}" {{ $work->url ? 'target=_blank' : 'class=img-preview' }} title="{{ $work['description_'.app()->getLocale()] }}"><img src="{{ asset($work->preview) }}" /></a>
                             </div>
                         @endif
                     @endforeach

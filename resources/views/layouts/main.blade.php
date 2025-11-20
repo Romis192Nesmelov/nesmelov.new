@@ -30,7 +30,7 @@
 <footer>
     <div class="container text-center">
         <div class="logo"><img src="{{ asset('storage/images/logo.jpg') }}"></div>
-        <p class="small">©Несмелов.рф {{ date('Y') }}г.<br>{{ getSeoTags()['meta_description'] }}</p>
+        <p class="small">{{ '© '.getSeoTags()['title'].' '.date('Y') }}г.<br>{{ getSeoTags()['meta_description'] }}</p>
     </div>
 </footer>
 

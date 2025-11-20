@@ -19,7 +19,7 @@
                 @foreach ($data['banks'] as $bank)
                     <tr role="row" id="{{ 'bank_'.$bank->id }}">
                         <td class="id">{{ $bank->id }}</td>
-                        <td class="text-center"><a href="/admin/banks?id={{ $bank->id }}">{{ $bank->name }}</a></td>
+                        <td class="text-center"><a href="{{ url('/admin/banks?id='.$bank->id) }}">{{ $bank->name }}</a></td>
                         <td class="text-center hidden-xs">{{ $bank->created_at }}</td>
                         <td class="delete hidden-xs"><span del-data="{{ $bank->id }}" modal-data="delete-modal" class="glyphicon glyphicon-remove-circle"></span></td>
                     </tr>

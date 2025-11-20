@@ -1,0 +1,1 @@
+<div class="sub-point">{{ $point }}<div class="number"></div><div class="text">{!! $text !!}</div></div>

@@ -6,7 +6,7 @@
 
     <div class="panel panel-flat">
         <div class="panel-heading">
-            <h4 class="panel-title">{{ isset($data['task']) ? 'Редактирование задачи '.$data['task']->customer->name.' - «'.$data['task']->name.'»' : __('Adding a task') }}</h4>
+            <h4 class="panel-title">{{ isset($data['task']) ? __('Editing the task').' '.$data['task']->customer->name.' - «'.$data['task']->name.'»' : __('Adding a task') }}</h4>
             @include('admin.blocks._heading_elements_block')
         </div>
         <div class="panel-body">
@@ -406,7 +406,7 @@
                 @endif
 
                 @can('owner-or-user-task',$data['task'])
-                    @include('admin.blocks._add_button_block',['href' => 'tasks/sub_task/add?id='.$data['task']->id, 'text' => __('Add a subtask')])
+                    @include('admin.blocks._add_button_block',['href' => 'sub_task/add?id='.$data['task']->id, 'text' => __('Add a subtask')])
                 @endcan
 
                 @if (count($data['task']->subTasks))

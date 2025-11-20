@@ -47,21 +47,43 @@
                         <div class="panel-body">
                             <div class="panel-body">
                                 @include('admin.blocks._input_block', [
-                                    'label' => __('Task name'),
-                                    'name' => 'name',
+                                    'label' => __('Task name in Russian'),
+                                    'addClass' => 'col-md-6 col-sm-12 col-xs-12',
+                                    'name' => 'name_ru',
                                     'type' => 'text',
-                                    'max' => 100,
-                                    'placeholder' => __('Task name'),
-                                    'value' => isset($data['work']) ? $data['work']->name : ''
+                                    'max' => 255,
+                                    'placeholder' => __('Task name in Russian'),
+                                    'value' => isset($data['work']) ? $data['work']->name_ru : ''
                                 ])
 
                                 @include('admin.blocks._input_block', [
-                                    'label' => __('Task description'),
-                                    'name' => 'description',
+                                    'label' => __('Task name in English'),
+                                    'addClass' => 'col-md-6 col-sm-12 col-xs-12',
+                                    'name' => 'name_en',
                                     'type' => 'text',
-                                    'max' => 300,
-                                    'placeholder' => __('Task description'),
-                                    'value' => isset($data['work']) ? $data['work']->description : ''
+                                    'max' => 255,
+                                    'placeholder' => __('Task name in English'),
+                                    'value' => isset($data['work']) ? $data['work']->name_en : ''
+                                ])
+
+                                @include('admin.blocks._input_block', [
+                                    'label' => __('Task description in Russian'),
+                                    'addClass' => 'col-md-6 col-sm-12 col-xs-12',
+                                    'name' => 'description_ru',
+                                    'type' => 'text',
+                                    'max' => 255,
+                                    'placeholder' => __('Task description in Russian'),
+                                    'value' => isset($data['work']) ? $data['work']->description_ru : ''
+                                ])
+
+                                @include('admin.blocks._input_block', [
+                                    'label' => __('Task description in English'),
+                                    'addClass' => 'col-md-6 col-sm-12 col-xs-12',
+                                    'name' => 'description_en',
+                                    'type' => 'text',
+                                    'max' => 255,
+                                    'placeholder' => __('Task description in English'),
+                                    'value' => isset($data['work']) ? $data['work']->description_en : ''
                                 ])
                             </div>
                         </div>

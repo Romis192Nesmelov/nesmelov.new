@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditBankRequest;
+use App\Http\Requests\EditBillRequest;
+use App\Http\Requests\EditSubTaskRequest;
+use App\Http\Requests\EditTaskRequest;
+use App\Http\Requests\EditUserRequest;
 use App\Models\Branch;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Task;
@@ -17,9 +22,11 @@ use App\Models\Customer;
 use App\Models\Bank;
 use App\Models\Bill;
 use App\Models\FixTax;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use JetBrains\PhpStorm\Pure;
 
 class UserController extends Controller
 {
@@ -29,27 +36,9 @@ class UserController extends Controller
     /**
      * @var string[]
      */
-    private array $breadcrumbs;
-    public array $billsStatuses;
-    public array $incomeStatuses;
-    public array $taskGetCondition;
+    protected array $breadcrumbs;
     protected array $data = [];
     protected string $regYear = '/^(20(\d){2})$/';
-
-    public function __construct()
-    {
-        $this->billsStatuses = [__('Paid'),__('Issued for the full amount'),__('Issued for a portion of the amount')];
-        $this->incomeStatuses = [__('Paid'),__('Completed'),__('Prepayment')];
-        $this->taskGetCondition = [
-            'done' => __('Paid'),
-            'wait' => __('Completed'),
-            'work' => __('In progress'),
-            'hold' => __('Postponed'),
-            'returned' => __('Refinement'),
-            'fake_made' => __('Fake created'),
-            'fake_done' => __('Fake paid')
-        ];
-    }
 
     public function users($slug=null): View
     {
@@ -80,12 +69,12 @@ class UserController extends Controller
             $this->getStatuses();
 
             if (request()->has('id')) {
-                $this->data['task'] = Task::query()->where('id',request()->id)->with(['messages.owner','messages.user'])->first();
+                if (!$this->data['task'] = Task::query()->where('id',request()->id)->with(['messages.owner','messages.user','bills.task'])->first()) abort(404);
 
                 $this->data['customers'] = Customer::query()->where('type','<',5)->orWhere('id',$this->data['task']->customer_id)->orderBy('slug')->get();
-                $this->data['bills_statuses'] = $this->billsStatuses;
+                $this->data['bills_statuses'] = getBillsStatuses();
 
-                if (Gate::denies('owner-or-user-task',$this->data['task'])) abort(403, __('You do not have the rights to perform this operation!'));
+                if (Gate::denies('owner-or-user-task', $this->data['task'])) abort(403, __('You do not have the rights to perform this operation!'));
 
                 $this->breadcrumbs['tasks?id='.$this->data['task']->id] = $this->data['task']->name;
                 $this->checkTaskMessages();
@@ -94,8 +83,11 @@ class UserController extends Controller
             } elseif ($slug == 'add') {
                 $this->data['customers'] = Customer::query()->where('type','<',5)->orderBy('slug')->get();
                 if ($subSlug) {
-                    $this->data['customer'] = Customer::query()->where('slug',$subSlug)->first();
-                    if (!$this->data['customer'] || $this->data['customer']->type == 5) abort(404);
+                    if (
+                        !$this->data['customer'] = Customer::query()->where('slug',$subSlug)->with('tasks')->first() ||
+                        $this->data['customer']->type == 5
+                    ) abort(404);
+
                     $this->breadcrumbs['tasks/add/'.$subSlug] = __('Adding a task for').' '.$this->data['customer']->name;
                 } else {
                     $this->breadcrumbs['tasks/add'] = __('Adding a task');
@@ -136,705 +128,512 @@ class UserController extends Controller
         }
     }
 
-    public function subTask($slug=null)
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function subTask($slug=null): View
     {
         $this->breadcrumbs = ['tasks' => __('Tasks')];
-        dd(23423);
-//        $this->getStatusesSimple();
-//
-//        if ($slug == 'add') {
-//            $this->validate(request(), ['id' => $this->validationId.'tasks']);
-//            $this->getStatuses();
-//            $this->data['task'] = Task::find(request()->id);
-//            $this->checkTaskEditRights(request()->status, $this->data['task']->customer->type, $this->data['task']);
-//            $this->breadcrumbs['tasks?id='.$this->data['task']->id] = $this->data['task']->name;
-//            $this->breadcrumbs['tasks/sub_task/add?id='.$this->data['task']->id] = __('Adding a subtask to a task').' '.$this->data['task']->name;
-//        } else {
-//            $this->validate(request(), ['id' => $this->validationId.'sub_tasks']);
-//            $this->getStatuses();
-//            $this->data['sub_task'] = SubTask::findOrFail(request()->id);
-//            $this->data['task'] = $this->data['sub_task']->task;
-//
-//            $this->breadcrumbs['tasks?id='.$this->data['sub_task']->task->id] = $this->data['sub_task']->task->name;
-//            $this->breadcrumbs['tasks/sub_task?id='.$this->data['sub_task']->id] = $this->data['sub_task']->name;
-//            $this->checkTaskMessages();
-//        }
-//        return $this->showView('sub_task');
+        $this->getStatusesSimple();
+
+        if ($slug == 'add') {
+            $this->validate(request(), ['id' => $this->validationId.'tasks']);
+            if (!$this->data['task'] = Task::query()->where('id',request()->id)->with('customer')->first()) abort(404);
+            $this->getStatuses();
+            $this->breadcrumbs['tasks?id='.$this->data['task']->id] = $this->data['task']->name;
+            $this->breadcrumbs['tasks/sub_task/add?id='.$this->data['task']->id] = __('Adding a subtask to a task').' '.$this->data['task']->name;
+        } else {
+            if (!$this->data['sub_task'] = SubTask::query()->where('id',request()->id)->with('task')->first()) abort(404);
+            $this->getStatuses();
+            $this->data['task'] = $this->data['sub_task']->task->load(['messages.owner','messages.user']);
+            $this->breadcrumbs['tasks?id='.$this->data['sub_task']->task->id] = $this->data['sub_task']->task->name;
+            $this->breadcrumbs['tasks/sub_task?id='.$this->data['sub_task']->id] = $this->data['sub_task']->name;
+            $this->checkTaskMessages();
+        }
+        return $this->showView('sub_task');
     }
 
-//    public function messages()
-//    {
-//        $this->breadcrumbs = ['messages' => __('Messages')];
-//        $messages =
-//            Gate::allows('is-admin') ?
-//            Message::orderBy('id','desc')->get() :
-//            Message::query()->where('user_id',Auth::id())->orWhere('owner_id',Auth::id())->orderBy('id','desc')->get();
-//
-//        $this->data['messages_list'] = $messages;
-//        return $this->showView('messages');
-//    }
-//
-//    public function customers($slug=null)
-//    {
-//        $this->breadcrumbs = ['customers' => __('Customers')];
-//        $this->getBackUri(request()->path());
-//
-//        if ($slug && $slug != 'add') {
-//            $this->data['banks'] = Bank::all();
-//            $this->data['customer'] = Customer::query()->where('slug',$slug)->first();
-//            if (!$this->data['customer']) abort(404);
-//            $this->getStatusesSimple();
-//            $this->breadcrumbs['customers/'.$this->data['customer']->slug] = $this->data['customer']->name;
-//            return $this->showView('customer');
-//        } else if ($slug && $slug == 'add') {
-//            $this->breadcrumbs['customers/add'] = __('Adding a client');
-//            $this->data['banks'] = Bank::all();
-//            return $this->showView('customer');
-//        } else {
-//            $customers = new Customer();
-//            $this->data['customers'] = Gate::allows('is-admin') ? $customers->orderBy('type')->get() : $customers->whereIn('type',[1,2,3])->get();
-//            return $this->showView('customers');
-//        }
-//    }
-//
-//    public function banks($slug=null)
-//    {
-//        $this->breadcrumbs = ['banks' => __('Banks')];
-//        $this->data['banks'] = Bank::all();
-//
-//        if (request()->has('id')) {;
-//            $this->validate(request(), ['id' => $this->validationId.'banks']);
-//            $this->data['bank'] = Bank::find(request()->id);
-//            $this->breadcrumbs['banks/?id='.$this->data['bank']->id] = $this->data['bank']->name;
-//            return $this->showView('bank');
-//        } else if ($slug && $slug == 'add') {
-//            $this->breadcrumbs['banks/add'] = __('Adding a bank');
-//            return $this->showView('bank');
-//        } else {
-//            return $this->showView('banks');
-//        }
-//    }
+    public function messages(): View
+    {
+        $this->breadcrumbs = ['messages' => __('Messages')];
+        $this->data['messages_list'] =
+            Gate::allows('is-admin') ?
+            Message::query()
+                ->with(['owner','user','task.customer'])
+                ->orderBy('id','desc')
+                ->get() :
+            Message::query()
+                ->with(['owner','user','task.customer'])
+                ->where('user_id',Auth::id())
+                ->orWhere('owner_id',Auth::id())
+                ->orderBy('id','desc')
+                ->get();
 
-//    public function bills($slug=null)
-//    {
-//        $this->breadcrumbs = ['bills' => __('Bills')];
-//        $this->data['statuses'] = $this->billsStatuses;
-//        $this->getLastBillNumber();
-//        if (request()->has('id') && request()->id) {
-//            $this->validate(request(), ['id' => $this->validationId.'bills']);
-//            $this->data['bill'] = Bill::find(request()->id);
-//            if (
-//                !$this->data['bill'] ||
-//                (
-//                    $this->data['bill']->task->status > 2 &&
-//                    $this->data['bill']->task->status < 6 &&
-//                    !($this->data['bill']->task->status == 3 && $this->data['bill']->task->paid_off)
-//                ) ||
-//                Gate::denies('check-rights',[$this->data['bill'],'user_id']) ||
-//                $this->data['bill']->task->customer->ltd == 2
-//            ) abort(403, __('You do not have the rights to perform this operation!'));
-//
-//            $this->data['year'] = date('Y',$this->data['bill']->task->start_time);
-//            $this->getStatusesSimple();
-//            $this->getDataForBill($this->data['bill']->task->id);
-//            $this->breadcrumbs['bills/'.$this->data['bill']->slug] = 'Счет №'.$this->data['bill']->number;
-//            return $this->showView('bill');
-//        } else if ($slug && $slug == 'add') {
-//            $this->breadcrumbs['bills/add'] = __('Adding a bill');
-//            $this->getDataForBill(request()->has('task_id') ? request()->task_id : null);
-//            if (!count($this->data['tasks'])) abort(403, __('You do not have the rights to perform this operation!'));
-//            return $this->showView('bill');
-//        } else if ($slug && $slug != 'add') {
-//            $customer = Customer::query()->where('slug',$slug)->first();
-//            if (!$customer) abort(404);
-//            elseif ($customer->ltd == 2) abort(403, __('You do not have the rights to perform this operation!'));
-//
-//            $this->data['head'] = 'Счета '.$customer->name;
-//            $this->getDataForBill();
-//            $tasksIds = Task::query()->where('customer_id',$customer->id)->pluck('id')->toArray();
-//            $this->data['bills'] =
-//                Gate::allows('is-admin') ?
-//                Bill::query()->whereIn('task_id',$tasksIds)->orderBy('date','desc')->get() :
-//                Bill::query()->where('user_id',Auth::id())->whereIn('task_id',$tasksIds)->orderBy('date','desc')->get();
-//            return $this->showView('bills');
-//        } else {
-//            $this->data['head'] = __('Bills');
-//            $this->getDataForBill();
-//            $this->data['bills'] =
-//                Gate::allows('is-admin') ?
-//                Bill::orderBy('number','desc')->get() :
-//                Bill::query()->where('user_id',Auth::id())->orderBy('number','desc')->get();
-//            return $this->showView('bills');
-//        }
-//    }
+        return $this->showView('messages');
+    }
 
-//    public function printDoc($slug)
-//    {
-//        if (request()->has('stamp') && request()->stamp) $signature = 'stamp.png';
-//        elseif (request()->has('signature') && request()->signature) $signature = 'signature.png';
-//        else $signature = false;
-//
-//        $taxType = (bool)request()->tax_type;
-//
-//        $savedCustomerFields = [
-//            'saved_contract',
-//            'saved_additional',
-//        ];
-//
-//        $savedTaskFields = [
-//            'saved_convention',
-//        ];
-//
-//        $savedBillFields = [
-//            'saved_act',
-//            'saved_bill',
-//        ];
-//
-//        if (!in_array($slug,array_merge(['contract','convention','act','bill'],$savedCustomerFields,$savedTaskFields,$savedBillFields))) abort(404);
-//
-//        if (in_array($slug,$savedCustomerFields) || $slug == 'contract') {
-//            return $this->getDocument($slug, $signature, $taxType, new Customer(), $savedCustomerFields);
-//        } elseif (in_array($slug,$savedTaskFields) || $slug == 'convention') {
-//            return $this->getDocument($slug, $signature, $taxType, new Task(), $savedTaskFields);
-//        } else {
-//            return $this->getDocument($slug, $signature, $taxType, new Bill(), $savedBillFields);
-//        }
-//    }
+    public function customers($slug=null): View
+    {
+        $this->breadcrumbs = ['customers' => __('Customers')];
+        $this->getBackUri(request()->path());
 
-//    public function editUser()
-//    {
-//        $validationArr = [
-//            'name' => 'required|max:255|unique:users,name',
-//            'phone' => 'required|'.$this->validationPhone,
-//            'email' => 'required|email|unique:users,email'
-//        ];
-//        $fields = $this->processingFields('send_email', 'old_password');
-//        $fields['password'] = bcrypt($fields['password']);
-//
-//        if (Gate::denies('is-admin')) unset($fields['is_admin']);
-//
-//        if (request()->has('id')) {
-//            $validationArr['id'] = $this->validationId.'users';
-//            $validationArr['email'] .= ','.request()->id;
-//            $validationArr['name'] .= ','.request()->id;
-//            if (Gate::denies('is-admin')) $validationArr['old_password'] = 'required|min:3|max:50';
-//
-//            if (request()->password) {
-//                $validationArr['password'] = $this->validationPassword;
-//            } else unset($fields['password']);
-//
-//            $this->validate(request(), $validationArr);
-//            $user = User::find(request()->id);
-//            if (Gate::denies('user-edit',$user)) abort(403, __('You do not have the rights to perform this operation!'));
-//
-//            if (Gate::denies('is-admin') && request()->password && !Hash::check(request()->old_password, $user->password))
-//                return redirect()->back()->withInput()->withErrors(['old_password' => __('Wrong old password')]);
-//
-//            if (Gate::allows('is-admin') && $fields['is_admin'] != $user->is_admin && $user->send_email) {
-//                $this->sendMessage($fields['email'], null,'new_user_status', ['status' => $fields['is_admin']]);
-//            }
-//
-//            if ($fields['email'] != $user->email && $user->send_email) {
-//                $this->sendMessage($fields['email'], null, 'new_user_email');
-//                $this->sendMessage($user->email, null, 'unbind_email');
-//            }
-//            $user->update($fields);
-//        } else {
-//            if (request()->has('password')) {
-//                $validationArr['password'] = $this->validationPassword;
-//                $password = request()->password;
-//            } else {
-//                $password = str_random(8);
-//            }
-//            $this->validate(request(), $validationArr);
-//            $fields['password'] = bcrypt($password);
-//            $user = User::create($fields);
-//            if ($user->send_email) $this->sendMessage($fields['email'], null, 'new_user', ['password' => $password]);
-//        }
-//
-//        $this->saveCompleteMessage();
-//        return redirect('/admin/users');
-//    }
-//
-//    public function editTask()
-//    {
-//        $adminOrOwnerValidationArr = [
-//            'name' => $this->validationName,
-//            'email' => $this->validationEmail,
-//            'phone' => 'nullable|'.$this->validationPhone,
-//            'contact_person' => $this->validationContactPerson,
-//            'value' => $this->validationValue,
-//            'paid_off' => 'integer|max:2000000',
-//            'percents' => 'max:100',
-//            'start_time' => $this->validationDate,
-//            'completion_time' => $this->validationDate,
-//            'description' => 'nullable|min:10|max:10000',
-//            'user_id' => $this->validationId.'users,id',
-//            'customer_id' => $this->validationCustomerId
-//        ];
-//
-//        $ignoreFields = [];
-//        $validationArr = [];
-//        $checkBoxFields = ['send_email','save_convention'];
-//
-//        if (Gate::allows('is-admin')) $adminOrOwnerValidationArr['paid_percents'] = 'in:0,1';
-//        else $ignoreFields[] = 'paid_percents';
-//
-//        $timeFields = ['start_time','completion_time','convention_date'];
-//        if (request()->use_payment_time == 'on') {
-//            $validationArr['payment_time'] = $this->validationDate;
-//            $timeFields[] = 'payment_time';
-//        } else $ignoreFields[] = 'payment_time';
-//
-//        if (request()->has('id')) {
-//            $task = Task::findOrFail(request()->id);
-//            $this->checkTaskEdit($task);
-//            $this->checkTaskEditRights(request()->status, $task->customer->type, $task);
-//            list($validationArr, $timeFields) = $this->getTaskValidationSomeFields(request()->customer_id, $validationArr, $timeFields);
-//
-//            $customerBaseFields = ['contract'];
-//            $customerCheckboxFields = ['save_contract'];
-//
-//            if (Gate::allows('owner-task', $task)) {
-//                $validationArr = array_merge($validationArr,$adminOrOwnerValidationArr);
-//                if (Gate::allows('is-admin')) {
-//                    $validationArr['owner_id'] = $this->validationId.'users,id';
-//                    $checkBoxFields[] = 'use_duty';
-//                }
-//                $taskFields = $this->processingFields($checkBoxFields, array_merge($ignoreFields,$customerBaseFields,$customerCheckboxFields), $timeFields);
-//                $taskFields = $this->checkTaskFields($taskFields);
-//
-//                if (!request()->use_payment_time && $task->payment_time) $taskFields['payment_time'] = null;
-//
-//            } else {
-//                $taskFields['status'] = request()->status;
-//            }
-//
-//            $this->validate(request(), $validationArr);
-//            if ($this->checkStartCompletionTime($taskFields)) return $this->wrongCompletionTime();
-//
-//            // Task messages
-//            if ($taskFields['status'] != $task->status || $taskFields['completion_time'] != $task->completion_time || (isset($taskFields['payment_time']) && $taskFields['payment_time'] != $task->payment_time)) {
-//
-//                $mailFields = $this->getBaseFieldsMailMessage($task);
-//
-//                if ($taskFields['status'] != $task->status) {
-//
-//                    $taskFields = $this->checkTaskStatus($taskFields);
-//
-//                    $mailFields['status'] = $this->getSimpleTaskStatus($taskFields['status']);
-//                    $messageText = $this->changedTaskStatus;
-//                    $messageStatus = 4;
-//                    $mailView = 'new_task_status';
-//
-//                    $this->changeTaskStatus($task,$taskFields['status']);
-//
-//                } elseif ($taskFields['completion_time'] != $task->completion_time) {
-//                    $mailFields['time'] = date('d.m.Y',$taskFields['completion_time']);
-//                    $messageText = $this->changedTaskCompletionTime;
-//                    $mailFields['time_type'] = __('implementations');
-//                    $messageStatus = 5;
-//                    $mailView = 'new_task_time';
-//                } else {
-//                    $mailFields['time'] = date('d.m.Y',$taskFields['payment_time']);
-//                    $messageText = $this->changedTaskPaymentTime;
-//                    $mailFields['time_type'] = __('payments');
-//                    $messageStatus = 6;
-//                    $mailView = 'new_task_time';
-//                }
-//
-//                $this->createTaskMessage($task,$mailView,$mailFields,$messageText,$messageStatus,$taskFields['send_email']);
-//            }
-//
-//            // Checking paid off zeroing check
-//            if ($task->paid_off && !$taskFields['paid_off']) {
-//                foreach ($task->bills as $k => $bill) {
-//                    if (!$k && $bill->status == 2) {
-//                        $bill->status = 1;
-//                        $bill->save();
-//                    } elseif ($k) $bill->delete();
-//                }
-//            }
-//            $task->update($taskFields);
-//
-//            // Saving foreign documents
-//            $customerFields = $this->processingFields($customerCheckboxFields, array_merge($ignoreFields,array_keys($taskFields)));
-//            if (!$customerFields['save_contract']) $customerFields['contract'] = null;
-//            $task->customer->update($customerFields);
-//
-//            // Checking subtasks time
-//            if (count($task->subTasks)) {
-//                foreach ($task->subTasks as $subTasks) {
-//                    if ($subTasks->completion_time > $task->completion_time) {
-//                        $subTasks->completion_time = $task->completion_time;
-//                        $subTasks->save();
-//                    }
-//                }
-//            }
-//
-//            if ($task->status == 1 && count($task->bills)) {
-//                foreach ($task->bills as $bill) {
-//                    if ($bill->status != 1) $bill->update(['status' => 1]);
-//                }
-//            }
-//        } else {
-//            $validationArr = array_merge($validationArr,$adminOrOwnerValidationArr);
-//            list($validationArr, $timeFields) = $this->getTaskValidationSomeFields(request()->customer_id, $validationArr, $timeFields);
-//
-//            $this->validate(request(), $validationArr);
-//
-//            if (Gate::allows('is-admin')) $checkBoxFields[] = 'use_duty';
-//            $taskFields = $this->processingFields($checkBoxFields, $ignoreFields, $timeFields);
-//            if (!isset($taskFields['owner_id']) && $taskFields['status'] < 6) $taskFields['owner_id'] = Auth::id();
-//            $taskFields = $this->checkTaskFields($taskFields);
-//            $taskFields['tax_type'] = (int)Settings::getSettings()['my_status'];
-//            $customer = Customer::find(request()->customer_id);
-//
-//            if ($this->checkCustomerType($customer->type)) abort(403, __('You do not have the rights to perform this operation!'));
-//            $task = Task::create($taskFields);
-//            $this->updateStatistics($taskFields['status'], $task);
-//
-//            // Task messages
-//            $this->sendNewTaskMessage($task->send_email,$task,$this->getNewTaskFieldsMailMessage($task,null,$taskFields));
-//
-//            Message::create([
-//                'message' => __('A new task has been created'),
-//                'owner_id' => $task->owner->id,
-//                'user_id' => $task->user->id,
-//                'task_id' => $task->id,
-//                'status' => 3,
-//                'active_to_owner' => 1,
-//                'active_to_user' => 1
-//            ]);
-//        }
-//
-//        // Final redirect
-//        $this->saveCompleteMessage();
-//        return redirect(Session::has('back_uri') ? Session::get('back_uri') : '/admin/tasks');
-//    }
+        if ($slug && $slug != 'add') {
+            $this->data['banks'] = Bank::all();
+            if (!$this->data['customer'] = Customer::query()->where('slug',$slug)->first()) abort(404);
+            $this->getStatusesSimple();
+            $this->breadcrumbs['customers/'.$this->data['customer']->slug] = $this->data['customer']->name;
+            return $this->showView('customer');
+        } else if ($slug) {
+            $this->breadcrumbs['customers/add'] = __('Adding a client');
+            $this->data['banks'] = Bank::all();
+            return $this->showView('customer');
+        } else {
+            $customers = new Customer();
+            $this->data['customers'] = Gate::allows('is-admin') ? $customers->query()->orderBy('type')->get() : $customers->whereIn('type',[1,2,3])->get();
+            return $this->showView('customers');
+        }
+    }
 
-//    public function editSubTask()
-//    {
-//        $validationArr = [
-//            'name' => $this->validationName,
-//            'value' => $this->validationValue,
-//            'percents' => 'max:100',
-//            'start_time' => $this->validationDate,
-//            'completion_time' => $this->validationDate,
-//            'description' => 'nullable|min:10|max:2000',
-//        ];
-//
-//        if (Gate::allows('is-admin')) $validationArr['paid_percents'] = 'in:0,1';
-//        $fields = $this->processingFields('send_email', Gate::denies('is-admin') ? 'paid_percents' : null, ['start_time','completion_time']);
-//
-//        if (request()->has('id')) {
-//            $validationArr['id'] = $this->validationId.'sub_tasks';
-//            $validationArr['status'] = 'required|integer|min:1|max:5';
-//            $this->validate(request(), $validationArr);
-//
-//            $subTask = SubTask::find(request()->id);
-//            if ($this->checkSubTaskTime($subTask->completion_time, $subTask->task)) return $this->wrongCompletionTime();
-//            if ($this->checkSubTaskTime($fields['completion_time'], $subTask->task) || $this->checkStartCompletionTime($fields)) return $this->wrongCompletionTime();
-//            $this->checkTaskEditRights(request()->status, $subTask->task->customer->type, $subTask->task);
-//            $this->checkTaskEdit($subTask->task);
-//
-//            // Task messages
-//            if ($fields['status'] != $subTask->status || $fields['completion_time'] != $subTask->completion_time) {
-//
-//                $mailFields = $this->getBaseFieldsMailMessage($subTask);
-//
-//                if ($fields['status'] != $subTask->status) {
-//
-//                    $fields = $this->checkTaskStatus($fields);
-//
-//                    $mailFields['status'] = $this->getSimpleTaskStatus($fields['status']);
-//                    $messageText = $this->changedSubTaskStatus;
-//                    $messageStatus = 7;
-//                    $mailView = 'new_task_status';
-//                } else {
-//
-//                    if ($fields['completion_time'] < time()) return $this->wrongCompletionTime();
-//
-//                    $mailFields['time'] = date('d.m.Y',$fields['completion_time']);
-//                    $messageText = $this->changedSubTaskCompletionTime;
-//                    $mailFields['time_type'] = __('implementations');
-//                    $messageStatus = 8;
-//                    $mailView = 'new_task_time';
-//                }
-//
-//                $this->createTaskMessage($subTask,$mailView,$mailFields,$messageText,$messageStatus,$fields['send_email']);
-//            }
-//
-//            $subTask->update($fields);
-//            $this->saveCompleteMessage();
-//        } else {
-//            $validationArr['parent_id'] = $this->validationId.'tasks,id';
-//            $validationArr['status'] = 'required|integer|min:3|max:5';
-//            $this->validate(request(), $validationArr);
-//
-//            $task = Task::find(request()->parent_id);
-//
-//            if ($this->checkSubTaskTime($fields['completion_time'], $task) || $this->checkStartCompletionTime($fields)) return $this->wrongCompletionTime();
-//            $this->checkTaskEditRights(request()->status, $task->customer->type, $task);
-//            $fields['task_id'] = $fields['parent_id'];
-//            $subTask = SubTask::create($fields);
-//            $this->sendNewTaskMessage($task->send_email,$task,$this->getNewTaskFieldsMailMessage($task,$subTask,$fields));
-//            Message::create([
-//                'message' => __('A new subtask has been created'),
-//                'owner_id' => $task->owner->id,
-//                'user_id' => $task->user->id,
-//                'task_id' => $task->id,
-//                'sub_task_id' => $subTask->id,
-//                'status' => 9,
-//                'active_to_owner' => 1,
-//                'active_to_user' => 1
-//            ]);
-//            $this->saveCompleteMessage();
-//        }
-//        return redirect('/admin/tasks?id='.$subTask->task->id);
-//    }
-//
-//    public function editCustomer()
-//    {
-//        $validateArr = [
-//            'type' => 'required||min:1|max:5',
-//            'ltd' => 'min:0|max:3',
-//            'name' => 'required|max:255|unique:customers,name',
-//            'phone' => 'nullable|'.$this->validationPhone,
-//            'email' => 'nullable|email',
-//            'contact_person' => $this->validationContactPerson,
-//            'description' => 'max:2000',
-//            'director' => 'max:255',
-//            'director_case' => 'max:255',
-//            'address' => 'max:255',
-//            'okved' => 'max:255',
-//            'bank_id' => $this->validationId.'banks,id',
-//            'contract_number' => 'max:45',
-//            'contract_date' => $this->validationDate,
-//        ];
-//
-//        if (Gate::allows('is-admin')) $validateArr['type'] = 'required|min:1|max:5';
-//
-//        $variableFields = [
-//            'ogrn' => 'min:11|max:15',
-//            'okpo' => 'min:8|max:10',
-//            'oktmo' => 'size:8',
-//            'inn' => 'max:12',
-//            'kpp' => 'size:9',
-//            'payment_account' => 'size:20',
-//            'correspondent_account' => 'size:20',
-//        ];
-//
-//        foreach ($variableFields as $field => $value) {
-//            if (request()->has($field) && request()->input($field)) {
-//                $validateArr[$field] = $value;
-//            }
-//        }
-//
-//        $fields = $this->processingFields('save_contract', (Gate::allows('is-admin') ? null : 'type'), 'contract_date');
-//        if (!$fields['save_contract']) $fields['contract'] = null;
-//
-//        if (request()->has('id')) {
-//            $validateArr['id'] = $this->validationId.'customers';
-//            $validateArr['name'] .= ','.request()->id;
-//
-//            $this->validate(request(), $validateArr);
-//            $this->getBackUri(request()->path());
-//
-//            $customer = Customer::findOrFail(request()->id);
-//            if (Gate::allows('customer-edit',$customer)) $customer->update($fields);
-//            else abort(403, __('You do not have the rights to perform this operation!'));
-//        } else {
-//            $this->validate(request(), $validateArr);
-//            if (Gate::denies('is-admin')) $fields['type'] = 2;
-//            Customer::create($fields);
-//        }
-//        $this->saveCompleteMessage();
-//        return redirect('/admin/customers');
-//    }
-//
-//    public function editBank()
-//    {
-//        $validateArr = [
-//            'name' => 'required|max:255|unique:banks,name',
-//            'bank_id' => 'required|size:9|unique:banks,bank_id'
-//        ];
-//        $fields = $this->processingFields();
-//
-//        if (request()->has('id')) {
-//            $validateArr['id'] = $this->validationId.'banks';
-//            $validateArr['name'] .= ','.request()->id;
-//            $validateArr['bank_id'] .= ','.request()->id;
-//
-//            $this->validate(request(), $validateArr);
-//            Bank::query()->where('id',request()->id)->update($fields);
-//        } else {
-//            $this->validate(request(), $validateArr);
-//            Bank::create($fields);
-//        }
-//        $this->saveCompleteMessage();
-//        return redirect('/admin/banks');
-//    }
-//
-//    public function editBill()
-//    {
-//        $validateArr = [
-//            'number' => $this->validationBillNumber,
-//            'signing' => 'required|integer|min:1|max:3',
-//            'date' => $this->validationDate,
-//        ];
-//
-//        $customerBaseFields = ['contract'];
-//        $customerCheckboxFields = ['save_contract'];
-//
-//        $taskBaseFields = ['convention'];
-//        $taskCheckboxFields = ['save_convention'];
-//
-//        $billBaseFields = ['number','signing','status','date'];
-//        $billCheckboxFields = ['send_email','save_act','save_bill'];
-//        $billDateFields = ['date'];
-//
-//        $ignoreFields = ['value'];
-//
-//        $billFields = $this->processingFields($billCheckboxFields, array_merge($ignoreFields,$customerBaseFields,$customerCheckboxFields,$taskBaseFields,$taskCheckboxFields), $billDateFields);
-//
-//        if (!$billFields['save_act']) $customerFields['act'] = null;
-//        if (!$billFields['save_bill']) $customerFields['bill'] = null;
-//
-//        if (request()->has('id')) {
-//            $customerFields = $this->processingFields($customerCheckboxFields, array_merge($ignoreFields,$billBaseFields,$billCheckboxFields,$billDateFields,$taskBaseFields,$taskCheckboxFields));
-//            $taskFields = $this->processingFields($taskCheckboxFields, array_merge($ignoreFields,$billBaseFields,$billCheckboxFields,$billDateFields,$customerBaseFields,$customerCheckboxFields));
-//
-//            $bill = Bill::findOrFail(request()->id);
-//            if (Gate::denies('check-rights',[$bill, 'user_id']) || Gate::denies('check-rights',[$bill, 'owner_id'])) abort(403,__('You do not have the rights to perform this operation!'));
-//
-//            $validateArr['number'] .= ','.request()->id;
-//            $validateArr['status'] = 'required|in:1,'.($bill->task->paid_off && $bill->task->bills[0]->id == $bill->id && $bill->task->paid_off != $bill->task->value ? '3' : '2');
-//            $this->validate(request(), $validateArr);
-//
-//            if (
-//                $billFields['status'] == 1
-//                && $bill->task->status > 1
-//                && $bill->task->status < 7
-//                && Helper::isFinalBill($bill)
-//            ) {
-//                $mailFields = $this->getBaseFieldsMailMessage($bill->task);
-//                $mailFields['status'] = $this->getSimpleTaskStatus(1);
-//
-//                $this->changeTaskStatus($bill->task,1);
-//                $this->createTaskMessage($bill->task,'new_task_status',$mailFields,$this->changedTaskStatus,4,$billFields['send_email']);
-//
-//                $bill->task->status = $bill->task->status == 6 ? 7 : 1;
-//                $bill->task->save();
-//            }
-//
-//            $this->changeBillsBrothersStatus($billFields['signing'], $bill->task, $bill->id);
-//            $bill->update($billFields);
-//
-//            // Saving foreign documents
-//            if (!$customerFields['save_contract']) $customerFields['contract'] = null;
-//            $bill->task->customer->update($customerFields);
-//
-//            if (!$taskFields['save_convention']) $customerFields['convention'] = null;
-//            $bill->task->update($customerFields);
-//        } else {
-//            $validateArr['task_id'] = $this->validationTaskId;
-//            $this->validate(request(), $validateArr);
-//            $task = Task::find(request()->task_id);
-//            if (
-//                Gate::denies('check-rights',[$task, 'owner_id'])
-//                || ($task->status != 2 && $task->status != 3 && $task->status != 6)
-//                || (($task->status == 2 || $task->status == 6) && count($task->bills) > 1)
-//                || ($task->status == 3 && !$task->paid_off)
-//                || ($task->status == 3 && $task->paid_off && count($task->bills))
-//            ) abort(403,__('You do not have the rights to perform this operation!'));
-//            $billFields['status'] = $task->paid_off && !count($task->bills) && $task->paid_off != $task->value ? 3 : 2;
-//            $billFields['user_id'] = Auth::id();
-//
-//            $this->changeBillsBrothersStatus($billFields['signing'], $task);
-//            Bill::create($billFields);
-//        }
-//
-//        $this->saveCompleteMessage();
-//        return redirect('/admin/bills');
-//    }
-//
-//    public function getBillsValue()
-//    {
-//        $this->validate(request(), ['id' => $this->validationTaskId]);
-//        if (!$task = $this->getTaskForBill(request()->id)) return response()->json(['success' => false]);
-//        else return response()->json(['success' => true, 'value' => Helper::calculateTaskValForBill($task)]);
-//    }
-//
-//    public function getConventionNumber()
-//    {
-//        $this->validate(request(), ['id' => $this->validationTaskId]);
-//        if (!$task = $this->getTaskForBill(request()->id)) return response()->json(['success' => false]);
-//        else return response()->json(['success' => true, 'number' => $this->getLastConventionNumber($task->customer)]);
-//    }
-//
-//    public function deleteBank()
-//    {
-//        Customer::query()->where('bank_id',request()->id)->update(['bank_id' => null]);
-//        return $this->deleteSomething(new Bank());
-//    }
-//
-//    public function deleteBill()
-//    {
-//        return $this->deleteSomething(new Bill(), null, 'user_id');
-//    }
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function banks($slug=null): View
+    {
+        $this->breadcrumbs = ['banks' => __('Banks')];
+        $this->data['banks'] = Bank::all();
 
-//    public function deleteMessage()
-//    {
-//        $message = Message::findOrFail(request()->id);
-//        if (Gate::allows('owner-or-user-message', $message)) {
-//            if (Gate::allows('is-admin')) {
-//                $message->active_to_owner = 2;
-//                $message->active_to_user = 2;
-//            } elseif (Gate::allows('owner-message-not-admin', $message)) {
-//                $message->active_to_owner = 2;
-//            } else {
-//                $message->active_to_user = 2;
-//            }
-//            $message->save();
-//            return response()->json(['success' => true]);
-//        } else return response()->json(['success' => false]);
-//    }
-//
-//    public function deleteTask()
-//    {
-//        $task = Task::findOrFail(request()->id);
-//        if (Gate::allows('owner-task', $task)) {
-//            $task->delete();
-//            return response()->json(['success' => true]);
-//        } else {
-//            return response()->json(['success' => false]);
-//        }
-//    }
-//
-//    public function deleteSubTask(): JsonResponse
-//    {
-//        $subTask = SubTask::findOrFail(request()->id);
-//        if (Gate::allows('owner-or-user-task',$subTask->task)) {
-//            $subTask->delete();
-//            return response()->json(['success' => true]);
-//        } else {
-//            return response()->json(['success' => false]);
-//        }
-//    }
-//
-//    public function seenAll()
-//    {
-//        $messagesList = [];
-//        $messages = $this->getMessages();
-//        foreach ($messages as $message) {
-//            $this->setSeenMessage($message);
-//            $messagesList[] = $message->id;
-//        }
-//        return response()->json(['success' => true, 'messages' => $messagesList]);
-//    }
-//
-//    public function getNewMessages()
+        if (request()->has('id')) {;
+            $this->validate(request(), ['id' => $this->validationId.'banks']);
+            $this->data['bank'] = Bank::query()->where('id',request()->id)->first();
+            $this->breadcrumbs['banks/?id='.$this->data['bank']->id] = $this->data['bank']->name;
+            return $this->showView('bank');
+        } else if ($slug == 'add') {
+            $this->breadcrumbs['banks/add'] = __('Adding a bank');
+            return $this->showView('bank');
+        } else {
+            return $this->showView('banks');
+        }
+    }
+
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function bills($slug=null): View
+    {
+        $this->breadcrumbs = ['bills' => __('Bills')];
+        $this->data['statuses'] = getBillsStatuses();
+        $this->getLastBillNumber();
+
+        if (request()->has('id') && request()->id) {
+            $this->validate(request(), ['id' => $this->validationId.'bills']);
+            $this->data['bill'] = Bill::query()->where('id', request()->id)->with('task.customer')->first();
+            if (
+                ($this->data['bill']->task->status > 2 && $this->data['bill']->task->status < 6 && !($this->data['bill']->task->status == 3 && $this->data['bill']->task->paid_off)) ||
+                Gate::denies('check-rights',[$this->data['bill'],'user_id']) ||
+                $this->data['bill']->task->customer->ltd == 2
+            ) abort(403, __('You do not have the rights to perform this operation!'));
+
+            $this->data['year'] = date('Y',$this->data['bill']->task->start_time);
+            $this->getStatusesSimple();
+            $this->getDataForBill($this->data['bill']->task->id);
+            $this->breadcrumbs['bills/'.$this->data['bill']->slug] = 'Счет №'.$this->data['bill']->number;
+            return $this->showView('bill');
+        } else if ($slug && $slug == 'add') {
+            $this->breadcrumbs['bills/add'] = __('Adding a bill');
+            $this->getDataForBill(request()->has('task_id') ? request()->task_id : null);
+            if (!count($this->data['tasks'])) abort(403, __('You do not have the rights to perform this operation!'));
+            return $this->showView('bill');
+        } else if ($slug && $slug != 'add') {
+            $customer = Customer::query()->where('slug',$slug)->first();
+            if (!$customer) abort(404);
+            elseif ($customer->ltd == 2) abort(403, __('You do not have the rights to perform this operation!'));
+
+            $this->data['head'] = __('Bills').' '.$customer->name;
+            $this->getDataForBill();
+            $tasksIds = Task::query()->where('customer_id',$customer->id)->pluck('id')->toArray();
+            $this->data['bills'] =
+                Gate::allows('is-admin') ?
+                Bill::query()->whereIn('task_id',$tasksIds)->orderBy('date','desc')->get() :
+                Bill::query()->where('user_id',Auth::id())->whereIn('task_id',$tasksIds)->orderBy('date','desc')->get();
+            return $this->showView('bills');
+        } else {
+            $this->data['head'] = __('Bills');
+            $this->getDataForBill();
+            $this->data['bills'] =
+                Gate::allows('is-admin') ?
+                Bill::query()->orderBy('number','desc')->with('task.customer')->get() :
+                Bill::query()->where('user_id',Auth::id())->orderBy('number','desc')->with('task.customer')->get();
+            return $this->showView('bills');
+        }
+    }
+
+    public function printDoc(string $slug): View
+    {
+        if (request()->has('stamp') && request()->stamp) $signature = 'stamp.png';
+        elseif (request()->has('signature') && request()->signature) $signature = 'signature.png';
+        else $signature = false;
+
+        $taxType = (bool)request()->tax_type;
+
+        $savedCustomerFields = [
+            'saved_contract',
+            'saved_additional',
+        ];
+
+        $savedTaskFields = [
+            'saved_convention',
+        ];
+
+        $savedBillFields = [
+            'saved_act',
+            'saved_bill',
+        ];
+
+        if (!in_array($slug,array_merge(['contract','convention','act','bill'],$savedCustomerFields,$savedTaskFields,$savedBillFields))) abort(404);
+
+        if (in_array($slug,$savedCustomerFields) || $slug == 'contract') {
+            return $this->getDocument($slug, $signature, $taxType, new Customer(), $savedCustomerFields);
+        } elseif (in_array($slug,$savedTaskFields) || $slug == 'convention') {
+            return $this->getDocument($slug, $signature, $taxType, new Task(), $savedTaskFields);
+        } else {
+            return $this->getDocument($slug, $signature, $taxType, new Bill(), $savedBillFields);
+        }
+    }
+
+    public function editUser(EditUserRequest $request): RedirectResponse
+    {
+        $fields = $request->validated();
+        if (isset($fields['password'])) $fields['password'] = bcrypt($fields['password']);
+
+        if (request()->has('id')) {
+            $user = User::query()->find(request()->id);
+            if (Gate::denies('user-edit',$user)) abort(403, __('You do not have the rights to perform this operation!'));
+
+            if (Gate::denies('is-admin') && request()->password && !Hash::check(request()->old_password, $user->password))
+                return redirect()->back()->withInput()->withErrors(['old_password' => __('Wrong old password')]);
+
+            if (Gate::allows('is-admin') && $fields['is_admin'] != $user->is_admin) {
+                $this->sendMessage($fields['email'], null,'new_user_status', ['status' => $fields['is_admin']]);
+            }
+
+            if ($fields['email'] != $user->email) {
+                $this->sendMessage($fields['email'], null, 'new_user_email');
+                $this->sendMessage($user->email, null, 'unbind_email');
+            }
+            $user->update($fields);
+        } else {
+            User::query()->create($fields);
+            $this->sendMessage($fields['email'], null, 'new_user', ['password' => $request->password]);
+        }
+
+        $this->saveCompleteMessage();
+        return redirect('/admin/users');
+    }
+
+    public function editTask(EditTaskRequest $request): RedirectResponse
+    {
+        $fields = $request->validated();
+        $fields = $this->convertTimeFields($fields, ['start_time', 'completion_time', 'convention_date', 'payment_time']);
+        $fields = $this->convertCheckFields($fields, ['use_duty', 'send_email', 'use_payment_time', 'save_convention']);
+
+        if ($request->has('id')) {
+            $task = Task::query()->where('id',$request->id)->with(['customer','subTasks','bills','owner','user'])->first();
+            if (Gate::denies('owner-or-user-task', $task)) abort(403, __('You do not have the rights to perform this operation!'));
+            if ($this->checkStartCompletionTime($fields)) return $this->returnWrongCompletionTime();
+
+            // Task messages
+            if (
+                $fields['status'] != $task->status ||
+                $fields['completion_time'] != $task->completion_time ||
+                (isset($fields['payment_time']) && $fields['payment_time'] != $task->payment_time)
+            ) {
+                $mailFields = $this->getBaseFieldsMailMessage($task);
+
+                if ($fields['status'] != $task->status) {
+
+                    $fields = $this->checkTaskStatus($fields);
+
+                    $mailFields['status'] = $this->getSimpleTaskStatus($fields['status']);
+                    $messageText = __('Task status changed');
+                    $messageStatus = 4;
+                    $mailView = 'new_task_status';
+
+                    $this->changeTaskStatus($task, $fields['status']);
+
+                } elseif ($fields['completion_time'] != $task->completion_time) {
+                    $mailFields['time'] = date('d.m.Y',$fields['completion_time']);
+                    $messageText =__('Task status changed');
+                    $mailFields['time_type'] = __('implementations');
+                    $messageStatus = 5;
+                    $mailView = 'new_task_time';
+                } else {
+                    $mailFields['time'] = date('d.m.Y',$fields['payment_time']);
+                    $messageText = __('Task status changed');
+                    $mailFields['time_type'] = __('payments');
+                    $messageStatus = 6;
+                    $mailView = 'new_task_time';
+                }
+
+                $this->createTaskMessage($task, $mailView, $mailFields, $messageText, $messageStatus,$fields['send_email']);
+            }
+
+            // Checking paid off zeroing check
+            if ($task->paid_off && !$fields['paid_off']) {
+                foreach ($task->bills as $k => $bill) {
+                    if (!$k && $bill->status == 2) {
+                        $bill->status = 1;
+                        $bill->save();
+                    } elseif ($k) $bill->delete();
+                }
+            }
+            $task->update($fields);
+
+            // Checking subtasks time
+            if (count($task->subTasks)) {
+                foreach ($task->subTasks as $subTasks) {
+                    if ($subTasks->completion_time > $task->completion_time) {
+                        $subTasks->completion_time = $task->completion_time;
+                        $subTasks->save();
+                    }
+                }
+            }
+
+            if ($task->status == 1 && count($task->bills)) {
+                foreach ($task->bills as $bill) {
+                    if ($bill->status != 1) $bill->update(['status' => 1]);
+                }
+            }
+        } else {
+
+            if (!isset($fields['owner_id']) && $fields['status'] < 6) $fields['owner_id'] = Auth::id();
+            $task = Task::query()->create($fields);
+            $task->load(['owner','user']);
+            $this->updateStatistics($fields['status'], $task);
+
+            // Task messages
+            $this->sendNewTaskMessage($task->send_email, $task, $this->getNewTaskFieldsMailMessage($task,null, $fields));
+
+            Message::query()->create([
+                'message' => __('A new task has been created'),
+                'owner_id' => $task->owner->id,
+                'user_id' => $task->user->id,
+                'task_id' => $task->id,
+                'status' => 3,
+                'active_to_owner' => 1,
+                'active_to_user' => 1
+            ]);
+        }
+
+        // Final redirect
+        $this->saveCompleteMessage();
+        return redirect(Session::has('back_uri') ? Session::get('back_uri') : url('/admin/tasks'));
+    }
+
+    public function editSubTask(EditSubTaskRequest $request): RedirectResponse
+    {
+        $fields = $request->validated();
+        $fields = $this->convertTimeFields($fields,['start_time','completion_time']);
+        $fields = $this->convertCheckFields($fields, ['send_email']);
+
+        if ($request->has('id')) {
+            $subTask = SubTask::query()->where('id',$request->id)->with('task')->first();
+            if (Gate::denies('owner-or-user-task', $subTask->task)) abort(403, __('You do not have the rights to perform this operation!'));
+            if ($this->checkSubTaskTime($fields['completion_time'], $subTask->task) || $this->checkStartCompletionTime($fields)) return $this->returnWrongCompletionTime();
+
+            // Task messages
+            if ($fields['status'] != $subTask->status || $fields['completion_time'] != $subTask->completion_time) {
+                $mailFields = $this->getBaseFieldsMailMessage($subTask);
+
+                if ($fields['status'] != $subTask->status) {
+
+                    $fields = $this->checkTaskStatus($fields);
+
+                    $mailFields['status'] = $this->getSimpleTaskStatus($fields['status']);
+                    $messageText = __('Subtask status changed');
+                    $messageStatus = 7;
+                    $mailView = 'new_task_status';
+                } else {
+                    $mailFields['time'] = date('d.m.Y',$fields['completion_time']);
+                    $messageText = __('Subtask execution time has been changed');
+                    $mailFields['time_type'] = __('implementations');
+                    $messageStatus = 8;
+                    $mailView = 'new_task_time';
+                }
+                $this->createTaskMessage($subTask, $mailView, $mailFields, $messageText, $messageStatus, $fields['send_email']);
+            }
+
+            $subTask->update($fields);
+        } else {
+            $task = Task::query()->where('id', $request->parent_id)->with(['owner','user'])->first();
+            if (Gate::denies('owner-or-user-task', $task)) abort(403, __('You do not have the rights to perform this operation!'));
+            if ($this->checkSubTaskTime($fields['completion_time'], $task) || $this->checkStartCompletionTime($fields)) return $this->returnWrongCompletionTime();
+
+            $fields['task_id'] = $fields['parent_id'];
+            $subTask = SubTask::query()->create($fields);
+            $this->sendNewTaskMessage($task->send_email, $task, $this->getNewTaskFieldsMailMessage($task, $subTask, $fields));
+            Message::query()->create([
+                'message' => __('A new subtask has been created'),
+                'owner_id' => $task->owner->id,
+                'user_id' => $task->user->id,
+                'task_id' => $task->id,
+                'sub_task_id' => $subTask->id,
+                'status' => 9,
+                'active_to_owner' => 1,
+                'active_to_user' => 1
+            ]);
+        }
+        $this->saveCompleteMessage();
+        return redirect(url('/admin/tasks?id='.$subTask->task->id));
+    }
+
+    public function editBank(EditBankRequest $request): RedirectResponse
+    {
+        $fields = $request->validated();
+        if (request()->has('id')) Bank::query()->where('id',request()->id)->update($fields);
+        else Bank::create($fields);
+
+        $this->saveCompleteMessage();
+        return redirect('/admin/banks');
+    }
+
+    public function editBill(EditBillRequest $request): RedirectResponse
+    {
+        $fields = $request->validated();
+        $fields = $this->convertTimeFields($fields, ['date']);
+        $fields = $this->convertCheckFields($fields, ['save_contract','save_convention','save_act','save_bill','send_email']);
+
+        foreach (['contract','convention','act','bill'] as $item) {
+            if (!$fields['save_'.$item]) $fields[$item] = null;
+        }
+
+        if (request()->has('id')) {
+            $bill = Bill::query()->where('id',$request->id)->with(['task.customer','task.bills'])->first();
+            if (Gate::denies('check-rights',[$bill, 'user_id']) || Gate::denies('check-rights',[$bill, 'owner_id'])) abort(403,__('You do not have the rights to perform this operation!'));
+
+            if (
+                $fields['status'] == 1
+                && $bill->task->status > 1
+                && $bill->task->status < 7
+                && isFinalBill($bill)
+            ) {
+                $mailFields = $this->getBaseFieldsMailMessage($bill->task);
+                $mailFields['status'] = $this->getSimpleTaskStatus(1);
+
+                $this->changeTaskStatus($bill->task,1);
+                $this->createTaskMessage($bill->task,'new_task_status', $mailFields, __('Task status changed'),4, $fields['send_email']);
+
+                $bill->task->status = $bill->task->status == 6 ? 7 : 1;
+                $bill->task->save();
+            }
+
+            $this->changeBillsBrothersStatus($fields['signing'], $bill->task, $bill->id);
+            $bill->update($fields);
+
+            // Saving foreign documents
+            $bill->task->customer->update($fields);
+            $bill->task->update($fields);
+        } else {
+            $task = Task::query()->where('id',request()->task_id)->with(['customer','bills'])->first();
+            if (
+                Gate::denies('check-rights',[$task, 'owner_id'])
+                || ($task->status != 2 && $task->status != 3 && $task->status != 6)
+                || (($task->status == 2 || $task->status == 6) && count($task->bills) > 1)
+                || ($task->status == 3 && !$task->paid_off)
+                || ($task->status == 3 && $task->paid_off && count($task->bills))
+            ) abort(403,__('You do not have the rights to perform this operation!'));
+            $fields['status'] = $task->paid_off && !count($task->bills) && $task->paid_off != $task->value ? 3 : 2;
+            $fields['user_id'] = Auth::id();
+
+            $this->changeBillsBrothersStatus($fields['signing'], $task);
+            Bill::query()->create($fields);
+        }
+
+        $this->saveCompleteMessage();
+        return redirect(url('/admin/bills'));
+    }
+
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function getBillsValue(): JsonResponse
+    {
+        $this->validate(request(), ['id' => $this->validationTaskId]);
+        if (!$task = $this->getTaskForBill(request()->id)) return response()->json(['success' => false]);
+        else return response()->json(['success' => true, 'value' => calculateTaskValForBill($task)]);
+    }
+
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function getConventionNumber(): JsonResponse
+    {
+        $this->validate(request(), ['id' => $this->validationTaskId]);
+        if (!$task = $this->getTaskForBill(request()->id)) return response()->json(['success' => false]);
+        else return response()->json(['success' => true, 'number' => $this->getLastConventionNumber($task->customer)]);
+    }
+
+    public function deleteBank(): JsonResponse
+    {
+        Customer::query()->where('bank_id',request()->id)->update(['bank_id' => null]);
+        return $this->deleteSomething(new Bank());
+    }
+
+    public function deleteBill(): JsonResponse
+    {
+        return $this->deleteSomething(new Bill(),  'user_id');
+    }
+
+    public function deleteMessage(): JsonResponse
+    {
+        $message = Message::query()->where('id',request()->id)->first();
+        if ($message || Gate::allows('owner-or-user-message', $message)) {
+            if (Gate::allows('is-admin')) {
+                $message->active_to_owner = 2;
+                $message->active_to_user = 2;
+            } elseif (Gate::allows('owner-message-not-admin', $message)) {
+                $message->active_to_owner = 2;
+            } else {
+                $message->active_to_user = 2;
+            }
+            $message->save();
+            return response()->json(['success' => true]);
+        } else return response()->json(['success' => false]);
+    }
+
+    public function deleteTask(): JsonResponse
+    {
+        $task = Task::query()->where('id',request()->id)->first();
+        if (!$task || Gate::allows('owner-task', $task)) {
+            $task->delete();
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function deleteSubTask(): JsonResponse
+    {
+        $subTask = SubTask::query()->where('id',request()->id)->with('task')->first();
+        if ($subTask || Gate::allows('owner-or-user-task',$subTask->task)) {
+            $subTask->delete();
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function seenAll(): JsonResponse
+    {
+        $messagesList = [];
+        $messages = $this->getMessages();
+        foreach ($messages as $message) {
+            $this->setSeenMessage($message);
+            $messagesList[] = $message->id;
+        }
+        return response()->json(['success' => true, 'messages' => $messagesList]);
+    }
+
+//    public function getNewMessages(): JsonResponse
 //    {
 //        $messages = $this->getMessages();
 //        if (count($messages)) {
@@ -843,15 +642,10 @@ class UserController extends Controller
 //            return response()->json(['success' => false]);
 //        }
 //    }
-//
+
     protected function getBackUri($path): void
     {
         Session::put('back_uri',$path);
-    }
-
-    protected function getSidebar(): void
-    {
-        $this->data['sidebar'] = count($this->data['tasks']) || (isset($this->data['own_tasks']) && count($this->data['own_tasks']));
     }
 
     protected function getFixTax(): void
@@ -859,31 +653,11 @@ class UserController extends Controller
         $this->data['fix_tax'] = FixTax::query()->where('year', $this->data['year'] ?? date('Y'))->first();
     }
 
-    protected function getMessages($addCondition=null): array
-    {
-        $result = [];
-        $messages = Message::query()
-            ->where('active_to_owner',1)
-            ->orWhere('active_to_user',1)
-            ->with(['owner','user'])
-            ->get();
-        foreach ($messages as $message) {
-            if (
-                ($message->owner && Gate::allows('owner-message-not-admin', $message) && $message->active_to_owner) ||
-                ($message->user && Gate::allows('user-message-not-admin', $message) && $message->active_to_user) ||
-                $addCondition
-            ) {
-                $result[] = $message;
-            }
-        }
-        return $result;
-    }
-
     protected function getStatuses(): void
     {
         $this->data['statuses'] = [];
         $key = 1;
-        foreach ($this->taskGetCondition as $description) {
+        foreach (getTaskConditions() as $description) {
             $this->data['statuses'][] = ['val' => $key, 'descript' => $description];
             if ($key == 5 && ( !isset($this->data['task']) || (isset($this->data['task']) && $this->data['task']->status <= 5) ) ) break;
             else $key++;
@@ -893,7 +667,7 @@ class UserController extends Controller
     protected function getStatusesSimple(): void
     {
         $this->data['statuses_simple'] = [];
-        foreach ($this->taskGetCondition as $description) {
+        foreach (getTaskConditions() as $description) {
             $this->data['statuses_simple'][] = $description;
         }
     }
@@ -906,7 +680,46 @@ class UserController extends Controller
         }
     }
 
-    protected function checkTaskMessages()
+    protected function deleteSomething(Model $model, $checkRightsField=null): JsonResponse
+    {
+        $table = $model->query()->where('id',request()->id)->first();
+        if (
+            ($model instanceof User && request()->id == 1) ||
+            ($checkRightsField && Gate::denies('check-rights',[$table, $checkRightsField]))
+        ) response()->json(['success' => false]);
+
+        if ($model instanceof User) {
+            $table->load(['tasks','ownTasks'.'bills']);
+            if (count($table->tasks)) {
+                $this->changeUserTask($table->tasks, 'user_id');
+            }
+            if (count($table->ownTasks)) {
+                $this->changeUserTask($table->ownTasks, 'owner_id');
+            }
+            if (count($table->bills)) {
+                foreach ($table->bills as $bill) {
+                    $bill->user_id = 1;
+                    $bill->save();
+                }
+            }
+        }
+        $table->delete();
+        return response()->json(['success' => true]);
+    }
+
+    private function changeBillsBrothersStatus(int $signing, Task $task, int $billId=null): void
+    {
+        if ($signing == 3 && $task->paid_off && count($task->bills) > 1) {
+            foreach ($task->bills as $bill) {
+                if (!$billId || ($billId && $bill->id != $billId)) {
+                    $bill->signing = 3;
+                    $bill->save();
+                }
+            }
+        }
+    }
+
+    private function checkTaskMessages()
     {
         foreach ($this->data['task']->messages as $message) {
             if ($message->owner && $message->user) {
@@ -915,6 +728,37 @@ class UserController extends Controller
                 }
             } else $message->delete();
         }
+    }
+
+    #[Pure] private function getNewTaskFieldsMailMessage(Task $task, SubTask|null $subTask, array $fields): array
+    {
+        $fields['id'] = $subTask ? $subTask->id : $task->id;
+        $fields['parent_id'] = $subTask?->task->id;
+        $fields['parent_name'] = $subTask?->task->name;
+        $fields['customer'] = $task->customer->name;
+        $fields['email'] = $task->email ?: $task->customer->email;
+        $fields['phone'] = $task->phone ?: $task->customer->phone;
+        $fields['contact_person'] = $task->contact_person ? $task->contact_person : $task->customer->contact_person;
+        $fields['status'] = $this->getSimpleTaskStatus($subTask ? $subTask->status : $task->status);
+        $fields['owner'] = $task->owner->name;
+        $fields['user'] = $task->user->name;
+        return $fields;
+    }
+
+    private function sendNewTaskMessage(bool $sendMail, Task|SubTask $task, array $fields): void
+    {
+        if ($sendMail)
+            $this->sendMessage(
+                $task->owner->email,
+                ($task->owner->email != $task->user->email && $task->user->send_email ? $task->user->email : null),
+                'new_task',
+                $fields
+            );
+    }
+
+    private function returnWrongCompletionTime(): RedirectResponse
+    {
+        return redirect()->back()->withErrors(['completion_time' => __('Wrong completion time')])->withInput();
     }
 
     private function getTasks($slug): void
@@ -936,13 +780,13 @@ class UserController extends Controller
             ->with(['subTasks','customer','statistics'])
             ->orderBy('customer_id');
 
-        $tasksConditions = array_keys($this->taskGetCondition);
+        $tasksConditions = array_keys(getTaskConditions());
 
         if ($slug && in_array($slug, $tasksConditions)) {
             $status = array_search($slug, $tasksConditions)+1;
             $this->getTasksInWork($status);
 
-            $this->breadcrumbs['tasks/'.$slug] = $this->taskGetCondition[$slug];
+            $this->breadcrumbs['tasks/'.$slug] = getTaskConditions()[$slug];
 
             $tasks = $tasks->where('status',$status);
             $modelForYear = $modelForYear->where('status',$status);
@@ -965,21 +809,24 @@ class UserController extends Controller
         }
     }
 
-    private function getDocument($slug, $signature, $taxType, Model $model, array $savedFields): View
+    private function getDocument(string $slug, string|bool $signature, bool $taxType, Model $model, array $savedFields): View
     {
-        $model = $model->findOrFail(request()->id);
+        if (!$model = $model->query()->where('id',request()->id)->first()) abort(404);
 
         if (in_array($slug,$savedFields)) return view('docs.empty', ['content' => $model[str_replace('saved_','',$slug)]]);
         else return view('docs.'.$slug, ['item' => $model, 'signature' => $signature, 'taxType' => $taxType]);
     }
 
-    private function checkTaskFields($fields): array
+    private function changeTaskStatus(Task|SubTask $task, int $status): void
     {
-        if (!$fields['use_duty']) {
-            $fields['convention_number'] = null;
-            $fields['convention_date'] = null;
+        $this->updateStatistics($status, $task);
+        if ( ($status == 1 || $status == 2) && count($task->subTasks) ) {
+            SubTask::query()->where('task_id',$task->id)->update(['status' => $status]);
         }
-        return $fields;
+
+        if ($status == 1 && count($task->bills)) {
+            Bill::query()->where('task_id',$task->id)->update(['status' => 1]);
+        }
     }
 
     private function updateStatistics($status, $task): void
@@ -1009,7 +856,41 @@ class UserController extends Controller
         }
     }
 
-    private function setSeenMessage($message): void
+    private function createTaskMessage(Task|SubTask $item, string $mailView, array $mailFields, string $messageText, int $messageStatus, bool $sendMail): void
+    {
+        if (isset($item->task)) {
+            $taskId = $item->task->id;
+            $subTaskId = $item->id;
+            $owner = $item->task->owner;
+            $user = $item->task->user;
+        } else {
+            $taskId = $item->id;
+            $subTaskId = null;
+            $owner = $item->owner;
+            $user = $item->user;
+        }
+
+        if ($sendMail)
+            $this->sendMessage(
+                $owner->email,
+                ($owner->email != $user->email && $user->send_email ? $user->email : null),
+                $mailView,
+                $mailFields
+            );
+
+        Message::query()->create([
+            'message' => $messageText,
+            'owner_id' => $owner->id,
+            'user_id' => $user->id,
+            'task_id' => $taskId,
+            'sub_task_id' => $subTaskId,
+            'status' => $messageStatus,
+            'active_to_owner' => 1,
+            'active_to_user' => 1
+        ]);
+    }
+
+    private function setSeenMessage(Message $message): void
     {
         $userType = Gate::allows('owner-message-not-admin', $message) ? 'owner' : 'user';
         if (Gate::allows('owner-message-not-admin', $message)) {
@@ -1019,22 +900,43 @@ class UserController extends Controller
         $message->save();
     }
 
-    private function checkTaskEditRights($status, $customerType, Task $task): void
+    private function getBaseFieldsMailMessage(Task|SubTask  $item): array
     {
-        if (($this->checkCustomerType($customerType) && $status > 2) || Gate::denies('owner-or-user-task', $task)) abort(403, __('You do not have the rights to perform this operation!'));
+        $mailFields = [];
+        $mailFields['id'] = $item->id;
+        $mailFields['name'] = $item->name;
+        $mailFields['customer'] = isset($item->task) ? $item->task->customer->name : $item->customer->name;
+        $mailFields['parent_id'] = isset($item->task) ? $item->task->id : null;
+        $mailFields['parent_name'] = isset($item->task) ? $item->task->name : null;
+        return $mailFields;
     }
 
-    private function checkCustomerType($customerType): bool
+    private function checkTaskStatus($fields)
     {
-        return $customerType == 5;
+        if ($fields['status'] == 5) $fields['completion_time'] = time() + (60 * 60 * 24 * 2);
+        return $fields;
     }
 
-    private function checkSubTaskTime($completionTime, $task): bool
+    private function getSimpleTaskStatus($taskStatus): string
+    {
+        $k = 1;
+        $status = '';
+        foreach (getTaskConditions() as $status => $description) {
+            if ($taskStatus == $k) {
+                $status = $description;
+                break;
+            }
+            $k++;
+        }
+        return $status;
+    }
+
+    private function checkSubTaskTime(int $completionTime, Task $task): bool
     {
         return $completionTime > $task->completion_time;
     }
 
-    private function checkStartCompletionTime($fields): bool
+    private function checkStartCompletionTime(array $fields): bool
     {
         return $fields['start_time'] > $fields['completion_time'];
     }
@@ -1055,7 +957,7 @@ class UserController extends Controller
     private function getDataForBill($id=null)
     {
         $this->data['tasks'] = [];
-        $customers = Customer::query()->where('ltd','<',2)->orWhere('ltd',3)->orderBy('slug')->get();
+        $customers = Customer::query()->where('ltd','<',2)->orWhere('ltd',3)->orderBy('slug')->with(['tasks.bills'])->get();
         foreach ($customers as $customer) {
             $tasks = [];
             foreach ($customer->tasks as $task) {
@@ -1078,9 +980,9 @@ class UserController extends Controller
         $this->getFixTax();
     }
 
-    private function getTaskForBill($id)
+    private function getTaskForBill(int $id): Task|bool
     {
-        $task = Task::query()->find($id);
+        $task = Task::query()->where('id',$id)->with(['subTasks','customer'])->first();
         return ($task->status != 2 && $task->status != 6) ? false : $task;
     }
 
@@ -1102,7 +1004,7 @@ class UserController extends Controller
         $this->data['convention'] = $task->convention ? $task->convention : view('docs.convention',['item' => $task,'noPrint' => true])->render();
     }
 
-    private function showView($view): View
+    protected function showView($view): View
     {
         $usersSubmenu = [];
         $users = User::all();
@@ -1111,14 +1013,14 @@ class UserController extends Controller
         }
 
         $tasksSubmenu = [];
-        foreach ($this->taskGetCondition as $href => $name) {
+        foreach (getTaskConditions() as $href => $name) {
             $tasksSubmenu[] = ['href' => $href, 'name' => $name];
         }
 
         $menus = [
             ['href' => 'users', 'name' => (Gate::allows('is-admin') ? __('Users') : __('Users profile')), 'icon' => (Gate::allows('is-admin') ? 'icon-user' : 'icon-users'), 'submenu' => $usersSubmenu],
             ['href' => 'messages', 'name' => __('Messages'), 'icon' => 'icon-bubbles4'],
-            ['href' => 'tasks', 'name' => __('Tasks'), 'icon' => 'icon-calculator2', 'submenu' => $tasksSubmenu]
+            ['href' => 'tasks', 'sub_href' => 'sub_task', 'name' => __('Tasks'), 'icon' => 'icon-calculator2', 'submenu' => $tasksSubmenu]
         ];
 
         if (Gate::allows('is-admin')) {
@@ -1128,7 +1030,7 @@ class UserController extends Controller
 
             $submenuChapters = [];
             foreach ($chapters as $chapter) {
-                $submenuChapters[] = ['href' => $chapter->eng, 'name' => $chapter[App::getLocale()]];
+                $submenuChapters[] = ['href' => $chapter->slug, 'name' => $chapter[App::getLocale()]];
             }
 
             $menus[] = ['href' => 'seo', 'name' => 'SEO', 'icon' => 'icon-price-tags'];
@@ -1166,5 +1068,30 @@ class UserController extends Controller
             'data' => $this->data,
             'menus' => $menus
         ]);
+    }
+
+    private function getSidebar(): void
+    {
+        $this->data['sidebar'] = count($this->data['tasks']) || (isset($this->data['own_tasks']) && count($this->data['own_tasks']));
+    }
+
+    private function getMessages($addCondition=null): array
+    {
+        $result = [];
+        $messages = Message::query()
+            ->where('active_to_owner',1)
+            ->orWhere('active_to_user',1)
+            ->with(['owner','user','task.customer','subTask'])
+            ->get();
+        foreach ($messages as $message) {
+            if (
+                ($message->owner && Gate::allows('owner-message-not-admin', $message) && $message->active_to_owner) ||
+                ($message->user && Gate::allows('user-message-not-admin', $message) && $message->active_to_user) ||
+                $addCondition
+            ) {
+                $result[] = $message;
+            }
+        }
+        return $result;
     }
 }

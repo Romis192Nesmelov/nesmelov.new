@@ -46,7 +46,7 @@
             <li class="dropdown">
                 <a href="#" id="message-counter-container" class="dropdown-toggle" data-toggle="dropdown">
                     <i class="icon-bubbles4"></i>
-                    <span class="visible-xs-inline-block position-right">Сообщения</span>
+                    <span class="visible-xs-inline-block position-right">{{ __('Messages') }}</span>
                     @if (count($data['messages']))
                         <span id="message-counter" class="badge bg-warning-400">{{ count($data['messages']) }}</span>
                     @endif
@@ -66,7 +66,13 @@
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li><a href="{{ url('admin/users?id='.auth()->user()->id) }}"><i class="icon-user"></i> {{ __('Users profile') }}</a></li>
                     <li class="divider"></li>
-                    <li><a href="{{ route('auth.logout') }}"><i class="icon-switch2"></i> {{ trans('auth.logout') }}</a></li>
+                    <li><a href="{{ route('auth.logout') }}"><i class="icon-switch2"></i> {{ __('Logout') }}</a></li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="{{ route('admin.change-lang',['lang' => app()->getLocale() == 'ru' ? 'en' : 'ru']) }}">
+                            <i class="icon-pilcrow"></i> {{ app()->getLocale() == 'ru' ? __('English') : __('Russian') }}
+                        </a>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -104,7 +110,7 @@
         <ul class="navigation navigation-main navigation-accordion">
             <!-- Main -->
             @foreach ($menus as $menu)
-                <li {{ preg_match('/^(admin\/'.str_replace('/','\/',$menu['href']).')/', request()->path()) ? 'class=active' : '' }}>
+                <li {{ (preg_match('/^(admin\/'.str_replace('/','\/',$menu['href']).')/', request()->path())) || (isset($menu['sub_href']) && preg_match('/^(admin\/'.str_replace('/','\/',$menu['sub_href']).')/', request()->path())) ? 'class=active' : '' }}>
                     <a href="{{ url('/admin/'.$menu['href']) }}"><i class="{{ $menu['icon'] }}"></i> <span>{{ mb_substr($menu['name'], 0, 20) }}</span></a>
                     @if (isset($menu['submenu']) && count($menu['submenu']))
                         <ul>

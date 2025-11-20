@@ -2,8 +2,11 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link href="{{ asset('css/icons/icomoon/styles.css') }}" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="{{ asset('js/docs.js') }}"></script>
+    @vite([
+        'resources/css/icons/icomoon/styles.css',
+        'resources/css/docs.css',
+        'resources/js/docs.js',
+    ])
 </head>
 <body>
 

@@ -98,7 +98,7 @@
                     }
                 @endphp
 
-                @include('admin.blocks._tasks_table_item_block',['task' => $task])
+                @include('admin.blocks._tasks_table_item_block',['task' => $task,'uri' => 'tasks'])
             @endforeach
 
             @if (isset($data['work_tasks']))

@@ -7,7 +7,7 @@
         </div>
         <div class="panel-body">
             <form class="form-horizontal" enctype="multipart/form-data" action="{{ url('/admin/bank') }}" method="post">
-                {{ csrf_field() }}
+                @csrf
                 @if (isset($data['bank']))
                     <input type="hidden" name="id" value="{{ $data['bank']->id }}">
                 @endif

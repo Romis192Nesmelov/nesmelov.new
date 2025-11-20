@@ -2,11 +2,36 @@
 
 use App\Models\Bill;
 use App\Models\Task;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
 function getSettingsXML(): SimpleXMLElement
 {
     return simplexml_load_file(env('SETTINGS_XML'));
+}
+
+function getIncomeStatuses(): array
+{
+    return [__('Paid'),__('Completed'),__('Prepayment')];
+}
+
+function getBillsStatuses(): array
+{
+    return [__('Paid'),__('Issued for the full amount'),__('Issued for a portion of the amount')];
+}
+
+#[ArrayShape(['done' => "mixed", 'wait' => "mixed", 'work' => "mixed", 'hold' => "mixed", 'returned' => "mixed", 'fake_made' => "mixed", 'fake_done' => "mixed"])]
+function getTaskConditions(): array
+{
+    return [
+        'done' => __('Paid'),
+        'wait' => __('Completed'),
+        'work' => __('In progress'),
+        'hold' => __('Postponed'),
+        'returned' => __('Refinement'),
+        'fake_made' => __('Fake created'),
+        'fake_done' => __('Fake paid')
+    ];
 }
 
 function getMetas(): array
@@ -51,7 +76,7 @@ function getRequisites(): array
     return (array)getSettingsXML()->requisites;
 }
 
-function calculateTaskValForBill(Bill|Task $item): string
+function calculateTaskValForBill($item): string
 {
     if ($item instanceof Bill) {
         if ($item->task->paid_off) {
@@ -61,7 +86,7 @@ function calculateTaskValForBill(Bill|Task $item): string
                 else $billNumber++;
             }
             $value = $billNumber == 1 ? $item->task->paid_off : $item->task->value - $item->task->paid_off;
-        } else $value = $item->task->value;
+        } else $value = $item->task->value + calculateSubTasksValue($item->task);;
     } else {
         $task = $item instanceof Task ? $item : Task::query()->find($item);
         $value = $task->value + calculateSubTasksValue($task);

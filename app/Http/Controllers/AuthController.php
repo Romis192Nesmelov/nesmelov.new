@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function login()
+    public function login(): View|RedirectResponse
     {
         if (Auth::check()) return redirect(route('admin.tasks'));
         return view('login');
@@ -28,6 +29,6 @@ class AuthController extends Controller
     public function logout(): RedirectResponse
     {
         Auth::logout();
-        return redirect('/');
+        return redirect(url('/'));
     }
 }

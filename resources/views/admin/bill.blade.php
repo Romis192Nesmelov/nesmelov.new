@@ -33,8 +33,7 @@
                             <div class="panel-body">
                                 @include('admin.blocks._radio_button_block', [
                                     'name' => 'status',
-                                    'values' =>
-                                    $data['bill']->task->paid_off &&
+                                    'values' => $data['bill']->task->paid_off &&
                                     $data['bill']->task->bills[0]->id == $data['bill']->id &&
                                     $data['bill']->task->paid_off != $data['bill']->task->value ? [
                                         ['val' => 1, 'descript' => $data['statuses'][0]],
@@ -79,14 +78,21 @@
                 <div class="col-md-8 col-sm-6 col-xs-12">
                     <div class="panel panel-flat">
                         <div class="panel-body">
-                            @include('admin.blocks._select_group_block', [
-                                'addClass' => 'col-md-12 col-sm-12 col-xs-12 name',
-                                'label' => __('Tasks awaiting payment'),
-                                'name' => 'task_id',
-                                'groups' => $data['tasks'],
-                                'disabled' => isset($data['bill']),
-                                'selected' => isset($data['bill']) ? $data['bill']->task->id : 1,
-                            ])
+                            @if (isset($data['bill']))
+                                <div class="col-md-12 col-sm-12 col-xs-12 name">
+                                    <div class="description input-label">{{ __('Tasks awaiting payment') }}</div>
+                                    <div class="bill-task-name">{{ $data['bill']->task->name }}</div>
+                                </div>
+                            @else
+                                @include('admin.blocks._select_group_block', [
+                                    'addClass' => 'col-md-12 col-sm-12 col-xs-12 name',
+                                    'label' => __('Tasks awaiting payment'),
+                                    'name' => 'task_id',
+                                    'groups' => $data['tasks'],
+                                    'disabled' => false,
+                                    'selected' => isset($data['bill']) ? $data['bill']->task->id : 1,
+                                ])
+                            @endif
 
                             @include('admin.blocks._input_block', [
                                 'addClass' => 'col-md-4 col-sm-12 col-xs-12',
@@ -98,18 +104,14 @@
                                 'value' => isset($data['bill']) ? $data['bill']->number : $data['last_number']+1
                             ])
 
-                            @include('admin.blocks._input_block', [
-                                'addClass' => 'col-md-4 col-sm-12 col-xs-12 bill-value',
-                                'label' => _('Sum'),
-                                'name' => 'value',
-                                'type' => 'text',
-                                'disabled' => true,
-                                'value' => isset($data['bill']) ? calculateTaskValForBill($data['bill']) : calculateTaskValForBill(key(current($data['tasks'])))
-                            ])
+                            <div class="col-md-4 col-sm-12 col-xs-12">
+                                <div class="description input-label">{{ __('Sum') }}</div>
+                                <div class="bill-value">{{ isset($data['bill']) ? calculateTaskValForBill($data['bill']) : calculateTaskValForBill(key(current($data['tasks']))) }}</div>
+                            </div>
 
                             @include('admin.blocks._date_block', [
                                 'addClass' => 'col-md-4 col-sm-12 col-xs-12',
-                                'label' => 'Дата счета',
+                                'label' => __('Bill date'),
                                 'name' => 'date',
                                 'value' => isset($data['bill']) ? $data['bill']->date : time()
                             ])

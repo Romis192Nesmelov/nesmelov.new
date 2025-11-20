@@ -23,7 +23,7 @@
                         <tr role="row" id="{{ 'message_'.$message->id }}">
                             <td class="text-center head">{!! $message->owner->name.'/<br>'.$message->user->name !!}</td>
                             <td class="text-center">{!! $message->message !!}</td>
-                            <td class="text-center"><a href="/admin/tasks?id={{ $message->task->id }}">{!! $message->task->customer->name.'<br> - «'.$message->task->name.'»' !!}</a></td>
+                            <td class="text-center"><a href="{{ url('/admin/tasks?id='.$message->task->id) }}">{!! $message->task->customer->name.'<br> - «'.$message->task->name.'»' !!}</a></td>
                             <td class="text-center">@include('admin.blocks._message_status_block', ['status' => $message->status])</td>
                             <td class="text-center">@include('admin.blocks._message_active_block', ['active_to_owner' => $message->active_to_owner,'active_to_user' => $message->active_to_user])</td>
                             <td class="text-center delete"><span del-data="{{ $message->id }}" modal-data="delete-modal" class="glyphicon glyphicon-remove-circle"></span></td>

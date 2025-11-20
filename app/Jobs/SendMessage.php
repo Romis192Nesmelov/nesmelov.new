@@ -21,7 +21,7 @@ class SendMessage implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($mailTo, $copyMail, $template, array $fields=[], $pathToFile=null)
+    public function __construct(string $mailTo, string $copyMail, string $template, array $fields=[], string $pathToFile=null)
     {
         $this->mailTo = $mailTo;
         $this->copyMail = $copyMail;

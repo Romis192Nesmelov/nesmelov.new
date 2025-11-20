@@ -6,6 +6,8 @@ use Illuminate\View\View;
 
 class StaticController extends Controller
 {
+    use HelperTrait;
+
     public function __invoke(): View
     {
         $data = [];
@@ -13,7 +15,7 @@ class StaticController extends Controller
 
         $data['branches'] = Branch::query()->where('active',1)->with('works')->get();
         foreach ($data['branches'] as $item) {
-            $mainMenu[] = ['href' => $item->en, 'name' => $item->ru];
+            $mainMenu[] = ['href' => $item->slug, 'name' => $item[app()->getLocale()]];
         }
 
         return view('home', [

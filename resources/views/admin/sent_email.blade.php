@@ -3,7 +3,7 @@
 @section('content')
     <div class="panel panel-flat">
         <div class="panel-heading">
-            <h4 class="panel-title">{{ __('The sent message is from ').$data['email']->created_at }}</h4>
+            <h4 class="panel-title">{{ __('The sent message is from').' '.$data['email']->created_at }}</h4>
         </div>
         <div class="panel-body">
             <div class="panel panel-flat">

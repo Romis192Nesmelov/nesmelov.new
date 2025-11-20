@@ -34,5 +34,6 @@
         </ul>
     </div>
 </nav>
-<div class="feedback"><a href="mailto:romis@nesmelov.com" data-toggle="modal">Обратная связь</a></div>
+<div class="feedback"><a href="mailto:{{ env('MAIL_TO') }}">{{ __('Feedback') }}</a></div>
+<div class="lang"><a href="{{ route('admin.change-lang',['lang' => app()->getLocale() == 'ru' ? 'en' : 'ru']) }}">{{ app()->getLocale() == 'ru' ? 'EN' : 'RU' }}</a></div>
 {{--<div class="feedback"><a href="#feedback_modal" data-toggle="modal">Напишите нам!</a></div>--}}
