@@ -119,8 +119,8 @@ function calculateOverTaskVal($task, $fullVal=true, $percents=false, $duty=false
     $value = 0;
     if (isset($task->subTasks) && count($task->subTasks)) {
         foreach($task->subTasks as $subTask) {
-//                if ($subTask->status == 1 || $subTask->status == 2 || $subTask->status == 7)
-            $value += $percents && $subTask->percents ? $subTask->value - calculateTaskPercents($subTask->value,$subTask->percents) : $subTask->value;
+            if ($subTask->status == 1 || $subTask->status == 2)
+                $value += $percents && $subTask->percents ? $subTask->value - calculateTaskPercents($subTask->value,$subTask->percents) : $subTask->value;
         }
     }
     return $value;

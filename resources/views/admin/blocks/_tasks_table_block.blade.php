@@ -68,7 +68,7 @@
                         }
                     }
 
-                    if ($task->status == 1 || $task->status == 7 || $task->paid_off) {
+                    if ($task->status == 1) {
                         $taskValue = calculateOverTaskVal($task);
                         $taskValueWithoutAll = calculateOverTaskVal($task, true, true, $task->use_duty, true);
 
@@ -76,11 +76,7 @@
                         $taskPercents = $task->percents ? calculateTaskPercents($taskValue - $taskDuty, $task->percents) : 0;
                         if (count($task->subTasks) && $presentSubTasks) {
                             foreach ($task->subTasks as $subTask) {
-                                if (
-                                    $subTask->percents
-                                    && ($subTask->status == 1 || $subTask->status == 7)
-                                    && date('Y',$subTask->completion_time) == date('Y')
-                                    ) {
+                                if ($subTask->percents && ($subTask->status == 1)) {
                                         $subTaskValueWithoutAll = calculateOverTaskVal($subTask, true, false, $task->use_duty, true);
                                         $subTaskDuty = $task->use_duty ? calculateTaskDuty($subTask->value, $task) : 0;
                                         $taskPercents += $subTask->percents ? calculateTaskPercents($subTaskValueWithoutAll - $subTaskDuty, $subTask->percents) : 0;
