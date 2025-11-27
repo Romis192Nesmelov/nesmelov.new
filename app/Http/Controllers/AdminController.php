@@ -46,7 +46,8 @@ class AdminController extends UserController
     {
         $this->breadcrumbs = ['chapters' => __('Landing\'s chapters')];
         if ($slug) {
-            if (!$this->data['chapter'] = Branch::query()->where('slug',$slug)->first()) abort(404);
+            $this->data['chapter'] = Branch::query()->where('slug',$slug)->first();
+            if (!$this->data['chapter']) abort(404);
             $this->breadcrumbs['chapters/'.$this->data['chapter']->slug] = $this->data['chapter'][app()->getLocale()];
 
             if (request()->has('id')) {
