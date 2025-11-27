@@ -69,7 +69,8 @@ class UserController extends Controller
             $this->getStatuses();
 
             if (request()->has('id')) {
-                if (!$this->data['task'] = Task::query()->where('id',request()->id)->with(['messages.owner','messages.user','bills.task'])->first()) abort(404);
+                $this->data['task'] = Task::query()->where('id',request()->id)->with(['messages.owner','messages.user','bills.task'])->first();
+                if (!$this->data['task']) abort(404);
 
                 $this->data['customers'] = Customer::query()->where('type','<',5)->orWhere('id',$this->data['task']->customer_id)->orderBy('slug')->get();
                 $this->data['bills_statuses'] = getBillsStatuses();
@@ -83,11 +84,8 @@ class UserController extends Controller
             } elseif ($slug == 'add') {
                 $this->data['customers'] = Customer::query()->where('type','<',5)->orderBy('slug')->get();
                 if ($subSlug) {
-                    if (
-                        !$this->data['customer'] = Customer::query()->where('slug',$subSlug)->with('tasks')->first() ||
-                        $this->data['customer']->type == 5
-                    ) abort(404);
-
+                    $this->data['customer'] = Customer::query()->where('slug',$subSlug)->with('tasks')->first();
+                    if (!$this->data['customer'] || $this->data['customer']->type == 5) abort(404);
                     $this->breadcrumbs['tasks/add/'.$subSlug] = __('Adding a task for').' '.$this->data['customer']->name;
                 } else {
                     $this->breadcrumbs['tasks/add'] = __('Adding a task');
@@ -138,12 +136,14 @@ class UserController extends Controller
 
         if ($slug == 'add') {
             $this->validate(request(), ['id' => $this->validationId.'tasks']);
-            if (!$this->data['task'] = Task::query()->where('id',request()->id)->with('customer')->first()) abort(404);
+            $this->data['task'] = Task::query()->where('id',request()->id)->with('customer')->first();
+            if (!$this->data['task']) abort(404);
             $this->getStatuses();
             $this->breadcrumbs['tasks?id='.$this->data['task']->id] = $this->data['task']->name;
             $this->breadcrumbs['tasks/sub_task/add?id='.$this->data['task']->id] = __('Adding a subtask to a task').' '.$this->data['task']->name;
         } else {
-            if (!$this->data['sub_task'] = SubTask::query()->where('id',request()->id)->with('task')->first()) abort(404);
+            $this->data['sub_task'] = SubTask::query()->where('id',request()->id)->with('task')->first();
+            if (!$this->data['sub_task']) abort(404);
             $this->getStatuses();
             $this->data['task'] = $this->data['sub_task']->task->load(['messages.owner','messages.user']);
             $this->breadcrumbs['tasks?id='.$this->data['sub_task']->task->id] = $this->data['sub_task']->task->name;
@@ -179,7 +179,8 @@ class UserController extends Controller
 
         if ($slug && $slug != 'add') {
             $this->data['banks'] = Bank::all();
-            if (!$this->data['customer'] = Customer::query()->where('slug',$slug)->first()) abort(404);
+            $this->data['customer'] = Customer::query()->where('slug',$slug)->first();
+            if (!$this->data['customer']) abort(404);
             $this->getStatusesSimple();
             $this->breadcrumbs['customers/'.$this->data['customer']->slug] = $this->data['customer']->name;
             return $this->showView('customer');
