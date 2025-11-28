@@ -1,11 +1,15 @@
 <table class="names">
     <tr>
-        <td class="head">От заказчика</td>
+        @if (isset($director))
+            <td class="head">От заказчика</td>
+        @endif
         <td></td>
         <td class="head">От исполнителя</td>
     </tr>
     <tr>
-        <td>{{ $director }}</td>
+        @if (isset($director))
+            <td>{{ $director }}</td>
+        @endif
         <td></td>
         <td>
             @if (isset($signature) && $signature)
