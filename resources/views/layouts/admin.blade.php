@@ -4,10 +4,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ count($data['messages']) ? '('.count($data['messages']).') ' : '' }}{{ getSeoTags()['title'].' '.__('Admin page') }}</title>
+    <title>{{ count($data['messages']) ? '('.count($data['messages']).') ' : '' }}{{ getSeoTags()['title'].'. '.__('Admin page') }}</title>
     @include('blocks._favicons_block')
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="{{ asset('js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/tools.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/admin.js') }}"></script>
     @if (isset($data['sidebar']) && $data['sidebar'])
         <script type="text/javascript" src="{{ asset('js/sidebar_detached_sticky_custom.js') }}"></script>
