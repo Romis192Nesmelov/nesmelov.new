@@ -5,12 +5,10 @@ use App\Models\SubTask;
 use App\Models\Task;
 use App\Models\Message;
 use App\Jobs\SendMessage;
-
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-
 
 trait HelperTrait
 {
@@ -60,7 +58,7 @@ trait HelperTrait
         Session::flash('message',__('Saving completed'));
     }
 
-    public function sendMessage(string $mailTo, string $copyMail, string $template, array $fields=[], string $pathToFile=null): void
+    public function sendMessage(string $mailTo, string|null $copyMail, string $template, array $fields=[], string $pathToFile=null): void
     {
         dispatch(new SendMessage($mailTo, $copyMail, $template, $fields, $pathToFile));
     }
@@ -124,13 +122,13 @@ trait HelperTrait
         $warningTime = (60*60*24);
         $tasksInWork = Task::query()->where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->get();
         $completedTasks = Task::query()->where('payment_time','<',time())->where('status',2)->get();
-        $subTasksInWork = SubTask::query()->where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->get();
+        $subTasksInWork = SubTask::query()->where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->with('task')->get();
 
         $this->checkTasksInWork($tasksInWork,$warningTime);
         $this->checkTasksInWork($subTasksInWork,$warningTime);
 
         foreach ($completedTasks as $task) {
-            if ($task->payment_time) $this->checkMessage($task,7,'оплаты','истекло');
+            if ($task->payment_time) $this->checkMessage($task,7,__('payments'),__('expired'));
         }
     }
 
@@ -145,12 +143,12 @@ trait HelperTrait
     private function checkTasksInWork($tasks, $warningTime): void
     {
         foreach ($tasks as $task) {
-            $timeType = 'выполнения';
+            $timeType = __('implementations');
             if (isset($task->task) && $task->task->status != 3 && $task->task->status != 5) continue;
             if ($task->completion_time < time()) {
-                $this->checkMessage($task,1,$timeType,'истекло');
+                $this->checkMessage($task,1,$timeType,__('expired'));
             } elseif ($task->completion_time < time() + $warningTime) {
-                $this->checkMessage($task,2,$timeType,'на исходе');
+                $this->checkMessage($task,2,$timeType,__('running out'));
             }
         }
     }
@@ -171,7 +169,7 @@ trait HelperTrait
             $mailFields = $this->getBaseFieldsMailMessage($task);
             $mailFields['time_type'] = $timeType;
             $mailFields['time_status'] = $timeStatus;
-            $this->createTaskMessage($task,'task_time_expires',$mailFields,('Время '.$timeType.' этой '.(isset($task->task) ? 'подзадачи ' : 'задачи ').$timeStatus),$messageStatus,true);
+            $this->createTaskMessage($task,'task_time_expires',$mailFields,(__('The time').' '.$timeType.' '.__('this').' '.(isset($task->task) ? __('subtasks') : __('for this task')).' '.$timeStatus),$messageStatus,true);
         }
     }
 }
