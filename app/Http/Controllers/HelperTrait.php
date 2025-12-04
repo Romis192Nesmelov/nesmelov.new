@@ -27,6 +27,7 @@ trait HelperTrait
     public string $validationTaskId = 'required|integer|exists:tasks,id';
     public string $validationCustomerId = 'required|integer|exists:customers,id';
     public string $validationBankName = 'required|min:10|max:255';
+    public string $validationString = 'required|max:255';
     public string $validationBankId = 'required|size:9';
     public string $validationCheckingAccount = 'required|min:20|max:24';
     public string $validationCorrespondentAccount = 'required|min:20|max:24';

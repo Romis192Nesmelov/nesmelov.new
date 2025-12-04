@@ -34,7 +34,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','lang'])->group(funct
 
     Route::get('/users/{slug?}', [UserController::class, 'users']);
     Route::post('/user', [UserController::class, 'editUser']);
-    Route::post('/delete-user', [AdminController::class, 'deleteUser'])->middleware(['auth.admin']);
+    Route::post('/delete-user', [AdminController::class, 'deleteUser'])->middleware(['admin']);
 
     Route::get('/tasks/{slug?}/{subSlug?}', [UserController::class,'tasks'])->name('tasks');
     Route::post('/task', [UserController::class, 'editTask']);
@@ -48,8 +48,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','lang'])->group(funct
     Route::post('/delete-message', [UserController::class, 'deleteMessage']);
 
     Route::get('/customers/{slug?}', [UserController::class, 'customers']);
-    Route::post('/customer', [AdminController::class, 'editCustomer'])->middleware(['auth.admin']);
-    Route::post('/delete-customer', [AdminController::class, 'deleteCustomer'])->middleware(['auth.admin']);
+    Route::post('/customer', [AdminController::class, 'editCustomer'])->middleware(['admin']);
+    Route::post('/delete-customer', [AdminController::class, 'deleteCustomer'])->middleware(['admin']);
 
     Route::get('/banks/{slug?}', [UserController::class, 'banks']);
     Route::post('/bank', [UserController::class, 'editBank']);
@@ -64,20 +64,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','lang'])->group(funct
 
     Route::get('/print-doc/{slug}', [UserController::class, 'printDoc']);
 
-    Route::get('/statistics/{slug?}', [AdminController::class, 'statistics'])->middleware(['auth.admin']);
+    Route::get('/statistics/{slug?}', [AdminController::class, 'statistics'])->middleware(['admin']);
 
     Route::get('/seo', [AdminController::class, 'seo']);
-    Route::post('/seo', [AdminController::class, 'editSeo'])->middleware(['auth.admin']);
+    Route::post('/seo', [AdminController::class, 'editSeo'])->middleware(['admin']);
 
-    Route::get('/settings', [AdminController::class, 'settings'])->middleware(['auth.admin']);
-    Route::post('/settings', [AdminController::class, 'editSettings'])->middleware(['auth.admin']);
+    Route::get('/settings', [AdminController::class, 'settings'])->middleware(['admin']);
+    Route::post('/settings', [AdminController::class, 'editSettings'])->middleware(['admin']);
 
-    Route::get('/chapters/{slug?}/{subSlug?}', [AdminController::class, 'chapters'])->middleware(['auth.admin']);
-    Route::post('/chapter', [AdminController::class, 'editChapter'])->middleware(['auth.admin']);
+    Route::get('/chapters/{slug?}/{subSlug?}', [AdminController::class, 'chapters'])->middleware(['admin']);
+    Route::post('/chapter', [AdminController::class, 'editChapter'])->middleware(['admin']);
 
-    Route::post('/work', [AdminController::class, 'editWork'])->middleware(['auth.admin']);
-    Route::post('/delete-work', [AdminController::class, 'deleteWork'])->middleware(['auth.admin']);
+    Route::post('/work', [AdminController::class, 'editWork'])->middleware(['admin']);
+    Route::post('/delete-work', [AdminController::class, 'deleteWork'])->middleware(['admin']);
 
-    Route::get('/sent-emails', [AdminController::class, 'sentEmails'])->middleware(['auth.admin']);
-    Route::post('/delete-sent-email', [AdminController::class, 'deleteSentEmail'])->middleware(['auth.admin']);
+    Route::get('/sent-emails', [AdminController::class, 'sentEmails'])->middleware(['admin']);
+    Route::post('/delete-sent-email', [AdminController::class, 'deleteSentEmail'])->middleware(['admin']);
 });
