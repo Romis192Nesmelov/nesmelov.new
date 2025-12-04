@@ -179,7 +179,7 @@ class UserController extends Controller
 
         if ($slug && $slug != 'add') {
             $this->data['banks'] = Bank::all();
-            $this->data['customer'] = Customer::query()->where('slug',$slug)->first();
+            $this->data['customer'] = Customer::query()->where('slug',$slug)->with('tasks.subTasks')->first();
             if (!$this->data['customer']) abort(404);
             $this->getStatusesSimple();
             $this->breadcrumbs['customers/'.$this->data['customer']->slug] = $this->data['customer']->name;
