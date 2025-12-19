@@ -262,8 +262,8 @@ class UserController extends Controller
             $this->getDataForBill();
             $this->data['bills'] =
                 Gate::allows('is-admin') ?
-                Bill::query()->orderBy('number','desc')->with('task.customer')->get() :
-                Bill::query()->where('user_id',Auth::id())->orderBy('number','desc')->with('task.customer')->get();
+                Bill::query()->orderBy('number','desc')->with(['task.customer','task.bills'])->get() :
+                Bill::query()->where('user_id',Auth::id())->orderBy('number','desc')->with(['task.customer','task.bills'])->get();
             return $this->showView('bills');
         }
     }
