@@ -29,6 +29,7 @@ class EditSettingsRequest extends FormRequest
             'tax' => 'required|integer|max:90',
             'tax1' => 'required|integer|max:90',
             'tax2' => 'required|integer|max:90',
+            'my_status' => 'required|integer|min:0|max:1',
             'my_percent' => 'required|integer|min:10|max:90',
             'fix_tax' => 'required|integer|min:5000|max:100000',
             'address' => 'required|min:10|max:255',

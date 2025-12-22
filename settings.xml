@@ -20,7 +20,7 @@
         <tax>6</tax>
         <tax1>6</tax1>
         <tax2>4</tax2>
-        <my_status>1</my_status>
+        <my_status>0</my_status>
         <my_percent>12</my_percent>
         <fix_tax>36724</fix_tax>
     </settings>
@@ -35,6 +35,5 @@
         <checking_account_se>4081 7810 5041 9000 6193</checking_account_se>
         <correspondent_account_ie>30101810200000000593</correspondent_account_ie>
         <correspondent_account_se>30101810200000000593</correspondent_account_se>
-        <my_status>1</my_status>
     </requisites>
 </root>

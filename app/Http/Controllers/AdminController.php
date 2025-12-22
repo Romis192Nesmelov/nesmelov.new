@@ -330,7 +330,7 @@ class AdminController extends UserController
         return $this->deleteSomething(new Work());
     }
 
-    public function deleteSentEmail()
+    public function deleteSentEmail(): JsonResponse
     {
         return $this->deleteSomething(new SentEmail());
     }
