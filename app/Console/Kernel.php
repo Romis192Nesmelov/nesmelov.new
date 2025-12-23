@@ -18,9 +18,9 @@ class Kernel extends ConsoleKernel
             $this->checkTasks();
         })->daily();
 
-        $schedule->call(function (){
-            $this->sqlDump();
-        })->monthly();
+//        $schedule->call(function (){
+//            $this->sqlDump();
+//        })->monthly();
         // $schedule->command('inspire')->hourly();
     }
 
