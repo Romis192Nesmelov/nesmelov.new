@@ -1,4 +1,4 @@
-<h1 class="head">Дополнительное соглашение №{{ $item->convention_number ? $item->convention_number : '___' }}</h1>
+<h1 class="head">Дополнительное соглашение №{{ $item->convention_number ? : '___' }}</h1>
 <p class="sub-head">
     @include('docs.blocks._contract_number_block', ['task' => $item])
 </p>

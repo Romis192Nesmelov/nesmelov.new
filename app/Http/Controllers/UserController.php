@@ -274,8 +274,6 @@ class UserController extends Controller
         elseif (request()->has('signature') && request()->signature) $signature = 'signature.png';
         else $signature = false;
 
-        $taxType = (bool)request()->tax_type;
-
         $savedCustomerFields = [
             'saved_contract',
             'saved_additional',
@@ -293,11 +291,11 @@ class UserController extends Controller
         if (!in_array($slug,array_merge(['contract','convention','act','bill'],$savedCustomerFields,$savedTaskFields,$savedBillFields))) abort(404);
 
         if (in_array($slug,$savedCustomerFields) || $slug == 'contract') {
-            return $this->getDocument($slug, $signature, $taxType, new Customer(), $savedCustomerFields);
+            return $this->getDocument($slug, $signature, new Customer(), $savedCustomerFields);
         } elseif (in_array($slug,$savedTaskFields) || $slug == 'convention') {
-            return $this->getDocument($slug, $signature, $taxType, new Task(), $savedTaskFields);
+            return $this->getDocument($slug, $signature, new Task(), $savedTaskFields);
         } else {
-            return $this->getDocument($slug, $signature, $taxType, new Bill(), $savedBillFields);
+            return $this->getDocument($slug, $signature, new Bill(), $savedBillFields);
         }
     }
 
@@ -559,7 +557,8 @@ class UserController extends Controller
     public function getBillsValue(): JsonResponse
     {
         $this->validate(request(), ['id' => $this->validationTaskId]);
-        if (!$task = $this->getTaskForBill(request()->id)) return response()->json(['success' => false]);
+        $task = $this->getTaskForBill(request()->id);
+        if (!$task) return response()->json(['success' => false]);
         else return response()->json(['success' => true, 'value' => calculateTaskValForBill($task)]);
     }
 
@@ -569,7 +568,8 @@ class UserController extends Controller
     public function getConventionNumber(): JsonResponse
     {
         $this->validate(request(), ['id' => $this->validationTaskId]);
-        if (!$task = $this->getTaskForBill(request()->id)) return response()->json(['success' => false]);
+        $task = $this->getTaskForBill(request()->id);
+        if (!$task) return response()->json(['success' => false]);
         else return response()->json(['success' => true, 'number' => $this->getLastConventionNumber($task->customer)]);
     }
 
@@ -810,12 +810,13 @@ class UserController extends Controller
         }
     }
 
-    private function getDocument(string $slug, string|bool $signature, bool $taxType, Model $model, array $savedFields): View
+    private function getDocument(string $slug, string|bool $signature, Customer|Task|Bill $model, array $savedFields): View
     {
-        if (!$model = $model->query()->where('id',request()->id)->first()) abort(404);
+        $model = $model->query()->where('id',request()->id)->first();
+        if (!$model) abort(404);
 
         if (in_array($slug,$savedFields)) return view('docs.empty', ['content' => $model[str_replace('saved_','',$slug)]]);
-        else return view('docs.'.$slug, ['item' => $model, 'signature' => $signature, 'taxType' => $taxType]);
+        else return view('docs.'.$slug, ['item' => $model, 'signature' => $signature]);
     }
 
     private function changeTaskStatus(Task|SubTask $task, int $status): void

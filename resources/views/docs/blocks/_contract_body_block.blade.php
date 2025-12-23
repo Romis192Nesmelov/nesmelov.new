@@ -1,7 +1,7 @@
 <link href="{{ asset('css/docs.css') }}" rel="stylesheet" type="text/css">
 <h1 class="head">Договор №{{ $item->contract_number ? $item->contract_number : '________' }}</h1>
 @include('docs.blocks._date_table_block', ['date' => $item->contract_date])
-<p>@include('docs.blocks._intro_block', ['customer' => $item, 'taxType' => $taxType]) заключили настоящий Договор о нижеследующем:</p>
+<p>@include('docs.blocks._intro_block', ['customer' => $item, 'taxType' => getSettings()['my_status']]) заключили настоящий Договор о нижеследующем:</p>
 <ol class="main-list">
     <li>Предмет Договора
         @include('docs.blocks._contract_sub_point_block', ['point' => '1.1', 'text' => 'В соответствие с настоящим Договором Исполнитель обязуется оказывать Заказчику услуги/выполнять работы по разработке и изготовлению дизайн-макетов рекламных материалов, шаблонов и рекламных макетов презентаций и каталогов продукции, печатных макетов различной полиграфической продукции, а также 3D-моделированию и web-программированию и другие услуги по созданию рекламных носителей, а Заказчик обязуется оплачивать предоставленные услуги/выполненные работы.'])
@@ -63,7 +63,7 @@
     <li class="creds">Адреса и банковские реквизиты Сторон
         <div>
             @include('docs.blocks._customer_creds_block', ['customer' => $item])
-            @include('docs.blocks._my_creds_block',['taxType' => $taxType])
+            @include('docs.blocks._my_creds_block',['taxType' => getSettings()['my_status']])
         </div>
     </li>
 </ol>
