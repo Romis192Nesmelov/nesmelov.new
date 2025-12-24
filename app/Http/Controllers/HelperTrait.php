@@ -121,9 +121,21 @@ trait HelperTrait
     public function checkTasks(): void
     {
         $warningTime = (60*60*24);
-        $tasksInWork = Task::query()->where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->get();
-        $completedTasks = Task::query()->where('payment_time','<',time())->where('status',2)->get();
-        $subTasksInWork = SubTask::query()->where('completion_time','<',(time() + $warningTime))->where( function($query){$query->where('status',3)->orWhere('status',5);} )->with('task')->get();
+        $tasksInWork = Task::query()
+            ->where('completion_time','<',(time() + $warningTime))
+            ->where( function($query){$query->where('status',3)->orWhere('status',5);})
+            ->with(['customer','owner','user'])
+            ->get();
+        $completedTasks = Task::query()
+            ->where('payment_time','<',time())
+            ->where('status',2)
+            ->with(['customer','owner','user'])
+            ->get();
+        $subTasksInWork = SubTask::query()
+            ->where('completion_time','<',(time() + $warningTime))
+            ->where( function($query){$query->where('status',3)->orWhere('status',5);})
+            ->with(['task.customer','task.owner','task.user'])
+            ->get();
 
         $this->checkTasksInWork($tasksInWork,$warningTime);
         $this->checkTasksInWork($subTasksInWork,$warningTime);

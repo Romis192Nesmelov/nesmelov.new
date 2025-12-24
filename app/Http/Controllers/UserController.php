@@ -61,6 +61,8 @@ class UserController extends Controller
 
     public function tasks($slug=null, $subSlug=null): View
     {
+        $this->checkTasks();
+
         $this->breadcrumbs = ['tasks' => __('Tasks')];
         $this->getStatusesSimple();
 
@@ -435,7 +437,7 @@ class UserController extends Controller
         $fields = $this->convertCheckFields($fields, ['send_email']);
 
         if ($request->has('id')) {
-            $subTask = SubTask::query()->where('id',$request->id)->with('task')->first();
+            $subTask = SubTask::query()->where('id',$request->id)->with('task.customer')->first();
             if (Gate::denies('owner-or-user-task', $subTask->task)) abort(403, __('You do not have the rights to perform this operation!'));
             if ($this->checkSubTaskTime($fields['completion_time'], $subTask->task) || $this->checkStartCompletionTime($fields)) return $this->returnWrongCompletionTime();
 
@@ -507,7 +509,8 @@ class UserController extends Controller
 
         if (request()->has('id')) {
             $bill = Bill::query()->where('id',$request->id)->with(['task.customer','task.bills'])->first();
-            if (Gate::denies('check-rights',[$bill, 'user_id']) || Gate::denies('check-rights',[$bill, 'owner_id'])) abort(403,__('You do not have the rights to perform this operation!'));
+            if (Gate::denies('check-rights',[$bill, 'user_id']) || Gate::denies('check-rights',[$bill, 'owner_id']))
+                abort(403,__('You do not have the rights to perform this operation!'));
 
             if (
                 $fields['status'] == 1
@@ -902,7 +905,7 @@ class UserController extends Controller
         $message->save();
     }
 
-    private function getBaseFieldsMailMessage(Task|SubTask  $item): array
+    private function getBaseFieldsMailMessage(Task|SubTask $item): array
     {
         $mailFields = [];
         $mailFields['id'] = $item->id;
