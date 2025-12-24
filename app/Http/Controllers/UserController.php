@@ -61,8 +61,6 @@ class UserController extends Controller
 
     public function tasks($slug=null, $subSlug=null): View
     {
-        $this->checkTasks();
-
         $this->breadcrumbs = ['tasks' => __('Tasks')];
         $this->getStatusesSimple();
 
