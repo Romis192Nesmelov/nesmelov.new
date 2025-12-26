@@ -99,14 +99,13 @@ class UserController extends Controller
             $this->getBackUri(request()->path());
             $this->data['year'] = ($slug && preg_match($this->regYear,$slug)) ? (int)$slug : (int)$subSlug;
 
-            if ($this->data['year'] < 2018 || $this->data['year'] > date('Y')) abort(404);
+            if ($this->data['year'] < 2018) abort(404);
             $this->breadcrumbs['tasks/'.$this->data['year']] = __('Tasks by').' '.$this->data['year'].' '.__('year');
 
             $this->getTasks($slug);
             $this->getSidebar();
             $this->getFixTax();
             return $this->showView('tasks');
-
         } else {
             $this->getBackUri(request()->path());
             $this->data['year'] = date('Y');
@@ -653,6 +652,7 @@ class UserController extends Controller
     protected function getFixTax(): void
     {
         $this->data['fix_tax'] = FixTax::query()->where('year', $this->data['year'] ?? date('Y'))->first();
+        if (!$this->data['fix_tax']) $this->data['fix_tax'] = getSettings()['fix_tax'];
     }
 
     protected function getStatuses(): void
@@ -951,10 +951,13 @@ class UserController extends Controller
             $year = date('Y',$time);
             if ( !in_array($year,$this->data['years']) ) $this->data['years'][] = $year;
         }
+
+        $currentYear = (int)date('Y');
         if (
             count($this->data['years']) &&
-            (int)$this->data['years'][count($this->data['years'])-1] != (int)date('Y')
-        ) $this->data['years'][] = (int)date('Y');
+            (int)$this->data['years'][count($this->data['years'])-1] != (int)date('Y') &&
+            !in_array($currentYear, $this->data['years'])
+        ) $this->data['years'][] = $currentYear;
     }
 
     private function getDataForBill($id=null)
