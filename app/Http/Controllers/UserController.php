@@ -765,7 +765,7 @@ class UserController extends Controller
 
     private function getTasks($slug): void
     {
-        $timestamp = strtotime('01-01-'.$this->data['year']);
+        $startTimeStamp = strtotime('01-01-'.$this->data['year']);
 
         $model = new Task();
         $modelForYear = clone $model;
@@ -773,10 +773,10 @@ class UserController extends Controller
         $tasks = $model
             ->query()
             ->where(
-                function($query) use ($timestamp) {
+                function($query) use ($startTimeStamp) {
                     $query
-                        ->where('completion_time','>=',$timestamp)->where('completion_time','<=',($timestamp + $this->yearTime))
-                        ->orWhere('start_time','>=',$timestamp)->where('start_time','<=',($timestamp + $this->yearTime));
+                        ->where('completion_time','>',$startTimeStamp)->where('completion_time','<',($startTimeStamp + $this->yearTime))
+                        ->orWhere('start_time','>',$startTimeStamp)->where('start_time','<',($startTimeStamp + $this->yearTime));
                 }
             )
             ->with(['subTasks','customer','statistics'])
