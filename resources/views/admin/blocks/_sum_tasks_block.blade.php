@@ -9,5 +9,5 @@
         @endif
         {{ __('Taxes:') }} <b>{{ $duty ? round($duty) : 0 }}₽</b><br>
     @endif
-    {{ __('Third-party %') }} <b>{{ round($percents) }}₽</b>
+    {{ __('Third-party %') }}: <b>{{ round($percents) }}₽</b>
 </div>
