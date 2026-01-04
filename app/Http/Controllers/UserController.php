@@ -798,7 +798,7 @@ class UserController extends Controller
 
         if (Gate::allows('is-admin')) {
             $this->data['tasks'] = $tasks->get();
-            $this->getTaskYears($modelForYear->orderBy('start_time')->pluck('start_time')->toArray());
+            $this->getTaskYears($modelForYear->query()->orderBy('start_time')->pluck('start_time')->toArray());
         } else {
             $taskOwn = clone $tasks;
             $modelForYearOwn = clone $modelForYear;
