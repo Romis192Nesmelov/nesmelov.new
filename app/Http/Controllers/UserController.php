@@ -995,7 +995,7 @@ class UserController extends Controller
     private function getLastConventionNumber($customer): int
     {
         $taskCounter = count($customer->tasks);
-        $lastNumber = $customer->tasks[$taskCounter-1]->convention_number;
+        $lastNumber = $customer->tasks[$taskCounter-1]->convention_number + 1;
         if ($taskCounter > 1) return $lastNumber ? $lastNumber + 1 : $taskCounter + 1;
         else return 1;
     }

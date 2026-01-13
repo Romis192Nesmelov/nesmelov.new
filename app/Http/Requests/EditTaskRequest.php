@@ -30,6 +30,7 @@ class EditTaskRequest extends FormRequest
             'email' => $this->validationEmail,
             'phone' => 'nullable|'.$this->validationPhone,
             'contact_person' => $this->validationContactString,
+            'convention_number' => 'nullable|integer|max:1000',
             'value' => $this->validationValue,
             'paid_off' => 'integer|max:2000000',
             'percents' => 'max:100',

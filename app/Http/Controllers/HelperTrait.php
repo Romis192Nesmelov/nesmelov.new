@@ -145,13 +145,13 @@ trait HelperTrait
         }
     }
 
-    public function sqlDump(): void
-    {
-        $dumpName = base_path('/storage/sql_dump').date('dmy').'.sql';
-        echo shell_exec('mysqldump --user='.env('app.DB_USERNAME').' --password='.env('DB_PASSWORD').' --host='.env('DB_HOST').' '.env('DB_DATABASE').' > '.$dumpName);
-        $this->sendMessage(env('MAIL_TO'),null, 'sql_dump', [], $dumpName);
-        unlink($dumpName);
-    }
+//    public function sqlDump(): void
+//    {
+//        $dumpName = base_path('/storage/sql_dump').date('dmy').'.sql';
+//        echo shell_exec('mysqldump --user='.env('app.DB_USERNAME').' --password='.env('DB_PASSWORD').' --host='.env('DB_HOST').' '.env('DB_DATABASE').' > '.$dumpName);
+//        $this->sendMessage(env('MAIL_TO'),null, 'sql_dump', [], $dumpName);
+//        unlink($dumpName);
+//    }
 
     private function checkTasksInWork($tasks, $warningTime): void
     {
