@@ -98,7 +98,7 @@
     "src": "resources/css/icons/summernote/summernote.woff"
   },
   "resources/js/app.js": {
-    "file": "assets/app-DJMJrZvH.js",
+    "file": "assets/app-BlqB9-Ps.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
@@ -107,6 +107,18 @@
     "file": "assets/docs-BCc_BvJy.js",
     "name": "docs",
     "src": "resources/js/docs.js",
+    "isEntry": true
+  },
+  "resources/js/fancybox.min.js": {
+    "file": "assets/fancybox.min-BMFRUrPs.js",
+    "name": "fancybox.min",
+    "src": "resources/js/fancybox.min.js",
+    "isEntry": true
+  },
+  "resources/js/jquery.easing.js": {
+    "file": "assets/jquery.easing-BYF1YoEQ.js",
+    "name": "jquery.easing",
+    "src": "resources/js/jquery.easing.js",
     "isEntry": true
   },
   "resources/js/statistics.js": {

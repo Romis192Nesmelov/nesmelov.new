@@ -16,10 +16,14 @@
         @endif
     @endforeach
 
+    <script type="text/javascript" src="{{ asset('js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/bootstrap.js') }}"></script>
     <link href="https://fonts.googleapis.com/css?family=Jura&display=swap" rel="stylesheet">
     @vite([
         'resources/css/icons/icomoon/styles.css',
         'resources/css/app.css',
+        'resources/js/fancybox.min.js',
+        'resources/js/jquery.easing.js',
         'resources/js/app.js',
     ])
 <body>
