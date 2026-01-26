@@ -104,7 +104,7 @@ class UserController extends Controller
 
             $this->getTasks($slug);
             $this->getSidebar();
-            $this->getFixTax();
+//            $this->getFixTax();
             return $this->showView('tasks');
         } else {
             $this->getBackUri(request()->path());
@@ -112,15 +112,8 @@ class UserController extends Controller
 
             $this->getTasks($slug);
             $this->getSidebar();
-            $this->getFixTax();
+//            $this->getFixTax();
 
-            if (!$this->data['fix_tax']) {
-                $lastFixTax = FixTax::query()->orderBy('id','desc')->first()->year;
-                $this->data['fix_tax'] = FixTax::query()->create([
-                    'value' => $lastFixTax,
-                    'year' => (int)date('Y')
-                ]);
-            }
             return $this->showView('tasks');
         }
     }
@@ -649,11 +642,11 @@ class UserController extends Controller
         Session::put('back_uri',$path);
     }
 
-    protected function getFixTax(): void
-    {
-        $this->data['fix_tax'] = FixTax::query()->where('year', $this->data['year'] ?? date('Y'))->first();
-        if (!$this->data['fix_tax']) $this->data['fix_tax'] = getSettings()['fix_tax'];
-    }
+//    protected function getFixTax(): void
+//    {
+//        $this->data['fix_tax'] = FixTax::query()->where('year', $this->data['year'] ?? date('Y'))->first();
+//        if (!$this->data['fix_tax']) $this->data['fix_tax'] = (int)getSettings()['my_status'] ? getSettings()['fix_tax'] : 0;
+//    }
 
     protected function getStatuses(): void
     {
@@ -983,7 +976,7 @@ class UserController extends Controller
             }
             if (count($tasks)) $this->data['tasks'][$customer->name] = $tasks;
         }
-        $this->getFixTax();
+//        $this->getFixTax();
     }
 
     private function getTaskForBill(int $id): Task|bool

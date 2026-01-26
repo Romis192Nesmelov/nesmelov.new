@@ -35,7 +35,6 @@ class AdminController extends UserController
         $this->breadcrumbs = ['settings' => 'Настройки'];
         $this->data['settings'] = getSettings();
         $this->data['requisites'] = getRequisites();
-        $this->getFixTax();
         return $this->showView('settings');
     }
 
@@ -137,7 +136,7 @@ class AdminController extends UserController
 
         $this->getStatuses();
         $this->getStatusesSimple();
-        $this->getFixTax();
+//        $this->getFixTax();
         $this->getBackUri(request()->path());
         $this->data['income_statuses'] = getIncomeStatuses();
 
