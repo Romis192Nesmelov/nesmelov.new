@@ -104,8 +104,10 @@ trait HelperTrait
     public function convertTimeFields(array $fields, array $values): array
     {
         foreach ($values as $value) {
-            $time = explode('/', $fields[$value]);
-            $fields[$value] = strtotime($time[1].'/'.$time[0].'/'.$time[2]);
+            if (isset($fields[$value])) {
+                $time = explode('/', $fields[$value]);
+                $fields[$value] = strtotime($time[1].'/'.$time[0].'/'.$time[2]);
+            }
         }
         return $fields;
     }

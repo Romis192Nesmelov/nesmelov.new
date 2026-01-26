@@ -21,7 +21,7 @@
                         'full' => isset($data['work']) ? asset($data['work']->preview) : null
                     ])
 
-                    @if ($data['chapter']->id == 2 || $data['chapter']->id == 5)
+                    @if ($data['chapter']->id == 2)
                         <div class="col-md-8 col-sm-12 col-xs-12">
                             @include('admin.blocks._input_block', [
                                 'label' => 'URL',

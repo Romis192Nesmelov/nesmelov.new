@@ -402,7 +402,6 @@ class UserController extends Controller
                 }
             }
         } else {
-
             if (!isset($fields['owner_id']) && $fields['status'] < 6) $fields['owner_id'] = Auth::id();
             $fields['tax_type'] = (int)getSettings()['my_status'];
             $task = Task::query()->create($fields);

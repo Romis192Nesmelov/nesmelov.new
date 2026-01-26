@@ -34,7 +34,7 @@ class EditWorkRequest extends FormRequest
             'active' => 'nullable'
         ];
 
-        if (request()->has('branch_id') && (request()->branch_id == 2 || request()->branch_id == 5)) {
+        if (request()->has('branch_id') && request()->branch_id == 2) {
             $validationArr['url'] = 'required|unique:works,url';
         } elseif(request()->has('id'))  {
             $validationArr['full'] = $this->validationImageRequired;
