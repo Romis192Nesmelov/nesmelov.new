@@ -976,7 +976,7 @@ class UserController extends Controller
             }
             if (count($tasks)) $this->data['tasks'][$customer->name] = $tasks;
         }
-//        $this->getFixTax();
+        $this->getFixTax();
     }
 
     private function getTaskForBill(int $id): Task|bool
