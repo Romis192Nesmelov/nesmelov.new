@@ -47,7 +47,7 @@ class EditWorkRequest extends FormRequest
         } else {
             $validationArr['preview'] = $this->validationImage;
 
-            if (request()->has('branch_id') && request()->branch_id != 2 && request()->branch_id != 5)
+            if (request()->has('branch_id') && request()->branch_id != 2)
                 $validationArr['full'] = $this->validationImage;
         }
 
