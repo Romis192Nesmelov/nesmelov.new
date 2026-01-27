@@ -104,7 +104,7 @@ class UserController extends Controller
 
             $this->getTasks($slug);
             $this->getSidebar();
-//            $this->getFixTax();
+            $this->getFixTax();
             return $this->showView('tasks');
         } else {
             $this->getBackUri(request()->path());
@@ -112,7 +112,7 @@ class UserController extends Controller
 
             $this->getTasks($slug);
             $this->getSidebar();
-//            $this->getFixTax();
+            $this->getFixTax();
 
             return $this->showView('tasks');
         }
@@ -642,11 +642,11 @@ class UserController extends Controller
         Session::put('back_uri',$path);
     }
 
-//    protected function getFixTax(): void
-//    {
-//        $this->data['fix_tax'] = FixTax::query()->where('year', $this->data['year'] ?? date('Y'))->first();
-//        if (!$this->data['fix_tax']) $this->data['fix_tax'] = (int)getSettings()['my_status'] ? getSettings()['fix_tax'] : 0;
-//    }
+    protected function getFixTax(): void
+    {
+        $tax = FixTax::query()->where('year', $this->data['year'] ?? date('Y'))->first();
+        $this->data['fix_tax'] = $tax ? $tax->value : 0;
+    }
 
     protected function getStatuses(): void
     {

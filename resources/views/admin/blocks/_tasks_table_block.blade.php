@@ -10,7 +10,7 @@
 
     <div class="panel-body">
         @if (count($tasks))
-            @php $totalSum = 0; $totalDuty = 0; $totalPercents = 0; $sum = 0; $duty = 0; $percents = 0; @endphp
+            @php $totalSum = 0; $totalDuty = 0; $totalPercents = 0; $sum = 0; $duty = 0; $percents = 0; $countFixTaxTasks = 0; @endphp
 
             @foreach ($tasks as $k => $task)
                 @if (count($task->statistics))
@@ -21,6 +21,8 @@
                     <script>window.statisticsData[parseInt("{{ $chart }}")].dataHorAxis[2].data[parseInt("{{ date($precision,$task->start_time)-$offset }}")]++;</script>
 
                     @php
+                        if ($task->tax_type) $countFixTaxTasks++;
+
                         if ($task->status == 1 && $task->payment_time) {
                             $status = 0;
                             $time = date($precision,$task->payment_time)-$offset;
@@ -114,8 +116,8 @@
             @include('admin.blocks._sum_tasks_block',[
                 'addTotalDesk' => __('Total profit'),
                 'showAverageIncome' => true,
-                'sum' => $totalSum,
-                'duty' => $totalDuty,
+                'sum' => $totalSum - ($data['fix_tax'] ? $data['fix_tax']/count($tasks)*$countFixTaxTasks : 0),
+                'duty' => $totalDuty + $data['fix_tax'],
                 'percents' => $totalPercents
             ])
         @endif
