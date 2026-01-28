@@ -52,7 +52,7 @@ class AdminController extends UserController
             if (request()->has('id')) {
                 $this->validate(request(), ['id' => $this->validationId.'works']);
                 $this->data['work'] = Work::query()->where('id',request()->id)->first();
-                $this->breadcrumbs['chapters/' . $this->data['chapter']->slug.'?id='.$this->data['work']->id] = $this->data['work']->name;
+                $this->breadcrumbs['chapters/' . $this->data['chapter']->slug.'?id='.$this->data['work']->id] = $this->data['work']['name_'.app()->getLocale()];
                 return $this->showView('work');
             } elseif ($subSlug == 'add') {
                 $this->breadcrumbs['chapters/' . $this->data['chapter']->slug.'/add'] = __('Adding Work');
