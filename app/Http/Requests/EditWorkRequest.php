@@ -34,21 +34,23 @@ class EditWorkRequest extends FormRequest
             'active' => 'nullable'
         ];
 
-        if (request()->has('branch_id') && request()->branch_id == 2) {
-            $validationArr['url'] = 'required|unique:works,url';
-        } elseif(request()->has('id'))  {
-            $validationArr['full'] = $this->validationImageRequired;
+        if (request()->has('branch_id')) {
+            if (request()->branch_id == 2) $validationArr['url'] = 'required|unique:works,url';
+            elseif (request()->branch_id == 5) $validationArr['url'] = $this->validationPDF;
         }
 
         if (request()->has('id')) {
             $validationArr['id'] = $this->validationId.'works';
-            $validationArr['preview'] = $this->validationImageRequired;
-            if (isset($validationArr['url'])) $validationArr['url'] .= ','.request()->id;
-        } else {
-            $validationArr['preview'] = $this->validationImage;
+            $validationArr['preview'] = 'nullable|'.$this->validationImage;
 
-            if (request()->has('branch_id') && request()->branch_id != 2)
-                $validationArr['full'] = $this->validationImage;
+            if (request()->has('branch_id')) {
+                if (request()->branch_id != 2) $validationArr['full'] = 'nullable|'.$this->validationImage;
+                else $validationArr['url'] .= ','.request()->id;
+            }
+
+        } else {
+            $validationArr['preview'] = 'required|'.$this->validationImage;
+            if (request()->has('branch_id') && request()->branch_id != 2) $validationArr['full'] = 'required|'.$this->validationImage;
         }
 
         return $validationArr;

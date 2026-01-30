@@ -17,15 +17,24 @@
         <a name="{{ $branch->slug }}"></a>
         <div class="image-block" style="background-image: url('{{ asset($branch->image) }}')"></div>
 
-        @if (count($branch->works))
+        @if (count($branch->activeWorks))
             <x-gray_block head="{{ __('Works from the portfolio').' «'.$branch[app()->getLocale()].'»' }}" scroll="{{ $branch->slug }}">
                 <div class="portfolio">
-                    @foreach($branch->works as $k => $work)
-                        @if ($work->active)
-                            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-                                <a href="{{ $work->url ? $work->url : asset($work->full) }}" {{ $work->url ? 'target=_blank' : 'class=img-preview' }} title="{{ $work['description_'.app()->getLocale()] }}"><img src="{{ asset($work->preview) }}" /></a>
-                            </div>
-                        @endif
+                    @foreach($branch->activeWorks as $k => $work)
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+                            @if ($branch->id == 5 && $work->url)
+                                <a class="hidden-xs" href="JavaScript:newWindow = window.open('/show-pdf/?id={{ $work->id }}','','top=100,left=100,toolbar=0,location=0,directories=0,status=0,menuBar=0,scrollBars=0,resizable=1,width=850,height=1000');newWindow.focus();" title="{{ $work['description_'.app()->getLocale()] }}">
+                                    <img src="{{ asset($work->preview) }}" />
+                                </a>
+                                <a class="img-preview visible-xs" href="{{ asset($work->full) }}" title="{{ $work['description_'.app()->getLocale()] }}">
+                                    <img src="{{ asset($work->preview) }}" />
+                                </a>
+                            @else
+                                <a href="{{ $work->url ? : asset($work->full) }}" {{ $work->url ? 'target=_blank' : 'class=img-preview' }} title="{{ $work['description_'.app()->getLocale()] }}">
+                                    <img src="{{ asset($work->preview) }}" />
+                                </a>
+                            @endif
+                        </div>
                     @endforeach
                 </div>
             </x-gray_block>

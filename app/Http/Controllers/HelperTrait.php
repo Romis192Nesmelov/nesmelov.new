@@ -5,10 +5,12 @@ use App\Models\SubTask;
 use App\Models\Task;
 use App\Models\Message;
 use App\Jobs\SendMessage;
+use App\Models\Work;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 trait HelperTrait
 {
@@ -16,8 +18,8 @@ trait HelperTrait
     public string $validationId = 'required|integer|exists:';
     public string $validationPassword = 'required|confirmed|min:3|max:50';
     public string $validationLoginPassword = 'required|min:3|max:50';
-    public string $validationImage = 'nullable|mimes:jpeg|min:5|max:5000';
-    public string $validationImageRequired = 'nullable|mimes:jpeg|min:5|max:5000';
+    public string $validationImage = 'file|mimes:jpeg|min:5|max:5000';
+    public string $validationPDF = 'nullable|file|mimes:pdf|min:5|max:5000';
     public string $validationContactString = 'nullable|min:3|max:255';
     public string $validationEmail = 'nullable|email';
     public string $validationName = 'required|min:5|max:255';
@@ -41,6 +43,15 @@ trait HelperTrait
         Cookie::queue(Cookie::make('lang', request()->lang, time()+(60*60*24*365)));
 //        setcookie('lang', request()->lang, time()+(60*60*24*365));
         return redirect()->back();
+    }
+
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function showPdf(): View
+    {
+        $this->validate(request(), ['id' => $this->validationId.'works']);
+        return view('show-pdf', ['pdf' => Work::query()->select('url')->where('id',request()->id)->first()['url']]);
     }
 
     public function putFile($file, string $addPath=''): string

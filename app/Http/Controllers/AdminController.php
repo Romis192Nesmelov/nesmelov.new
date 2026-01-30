@@ -283,17 +283,22 @@ class AdminController extends UserController
         $fields = $request->validated();
         $fields = $this->convertCheckFields($fields, ['active']);
 
+        $deletingFields = ['preview','full'];
+        if ($request->branch_id == 5) {
+            $fields = $this->processingWorkPdf($fields);
+            $deletingFields[] = 'url';
+        }
+        $fields = $this->processingWorkImages($fields);
+
         if ($request->has('id')) {
             $work = Work::query()->where('id',$request->id)->with('branch')->first();
-            $fields = $this->processingWorkImages($fields);
-            foreach (['preview','full'] as $imageField) {
-                if (isset($fields[$imageField]) && $work[$imageField]) {
-                    $this->deleteFile($work[$imageField]);
+            foreach ($deletingFields as $deletingField) {
+                if (isset($fields[$deletingField]) && $work[$deletingField]) {
+                    $this->deleteFile($work[$deletingField]);
                 }
             }
             $work->update($fields);
         } else {
-            $fields = $this->processingWorkImages($fields);
             $work = Work::query()->create($fields);
         }
 
@@ -329,6 +334,18 @@ class AdminController extends UserController
         return $this->deleteSomething(new Work());
     }
 
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function deletePdf(): JsonResponse
+    {
+        $this->validate(request(), ['id' => $this->validationId.'works']);
+        $work = Work::query()->where('id',request()->id)->first();
+        $this->deleteFile($work->url);
+        $work->update(['url' => '']);
+        return response()->json(['success' => true]);
+    }
+
     public function deleteSentEmail(): JsonResponse
     {
         return $this->deleteSomething(new SentEmail());
@@ -341,6 +358,12 @@ class AdminController extends UserController
                 $fields[$imageField] = $this->putFile($fields[$imageField], 'portfolio');
             }
         }
+        return $fields;
+    }
+
+    private function processingWorkPdf(array $fields): array
+    {
+        if (isset($fields['url']) && $fields['url']) $fields['url'] = $this->putFile($fields['url'], 'portfolio/pdfs');
         return $fields;
     }
 

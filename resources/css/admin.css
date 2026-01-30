@@ -27,6 +27,11 @@ html {
 body {
   margin: 0;
 }
+
+.icon-pdf .icon-file-pdf {
+    font-size: 37px;
+}
+
 article,
 aside,
 details,

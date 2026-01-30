@@ -293,5 +293,7 @@
     "Your E-mail is no longer a login in the system": "Ваш E-mail больше не является логином в системе",
     "expired": "истекло",
     "running out": "на исходе",
-    "this": "этой"
+    "this": "этой",
+    "No PDF": "Нет PDF",
+    "Delete PDF": "Удалить PDF"
 }

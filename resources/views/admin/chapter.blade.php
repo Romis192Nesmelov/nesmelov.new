@@ -104,19 +104,35 @@
                 @if (count($data['chapter']->works))
                     <table class="table datatable-basic table-items">
                         <tr>
-                            <th class="id">Id</th>
+                            @if ($data['chapter']->id != 5)
+                                <td class="id">Id</td>
+                            @endif
                             <th class="text-center">{{ __('Image') }}</th>
                             <th class="text-center">{{ __('Name') }}</th>
                             <th class="text-center">{{ __('Description') }}</th>
+                            @if ($data['chapter']->id == 5)
+                                <th class="text-center">PDF</th>
+                            @endif
                             <th class="text-center">{{ __('Status') }}</th>
                             <th class="delete">{{ __('Delete') }}</th>
                         </tr>
                         @foreach ($data['chapter']->works as $work)
                             <tr role="row" id="{{ 'work_'.$work->id }}">
-                                <td class="id">{{ $work->id }}</td>
+                                @if ($data['chapter']->id != 5)
+                                    <td class="id">{{ $work->id }}</td>
+                                @endif
                                 <td class="image"><a {{ $work->url ? 'target=_blank' : 'class=img-preview' }} href="{{ $work->url ? url($work->url) : asset($work->full) }}"><img src="{{ asset($work->preview) }}" /></a></td>
                                 <td class="text-center head"><a href="{{ url('/admin/chapters/'.$data['chapter']->slug.'?id='.$work->id) }}">{{ $work['name_'.app()->getLocale()] }}</a></td>
                                 <td class="text-center">{{ $work['description_'.app()->getLocale()] }}</td>
+                                @if ($data['chapter']->id == 5)
+                                    <td class="text-center">
+                                        @if ($work->url)
+                                            @include('admin.blocks._icon_pdf_block',['id' => $work->id])
+                                        @else
+                                            <b class="text-danger-800">{{ __('No PDF') }}</b>
+                                        @endif
+                                    </td>
+                                @endif
                                 <td class="text-center">@include('admin.blocks._status_block', ['status' => $work->active, 'trueLabel' => __('Active'), 'falseLabel' => __('Not Active')])</td>
                                 <td class="delete"><span del-data="{{ $work->id }}" modal-data="delete-modal" class="glyphicon glyphicon-remove-circle"></span></td>
                             </tr>

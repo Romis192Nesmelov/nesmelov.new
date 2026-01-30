@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', StaticController::class)->middleware(['lang']);
 Route::get('/change-lang', [StaticController::class, 'changeLang'])->name('change-lang');
+Route::get('/show-pdf', [StaticController::class, 'showPdf'])->name('show-pdf');
 
 Route::prefix('auth')->name('auth.')->controller(AuthController::class)->group(function () {
     Route::get('/login', 'login')->name('login');
@@ -77,6 +78,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','lang'])->group(funct
 
     Route::post('/work', [AdminController::class, 'editWork'])->middleware(['admin']);
     Route::post('/delete-work', [AdminController::class, 'deleteWork'])->middleware(['admin']);
+    Route::post('/delete-pdf', [AdminController::class, 'deletePdf'])->middleware(['admin']);
 
     Route::get('/sent-emails', [AdminController::class, 'sentEmails'])->middleware(['admin']);
     Route::post('/delete-sent-email', [AdminController::class, 'deleteSentEmail'])->middleware(['admin']);

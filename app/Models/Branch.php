@@ -21,6 +21,11 @@ class Branch extends Model
         ];
     }
 
+    public function activeWorks(): HasMany
+    {
+        return $this->hasMany(Work::class)->where('active',1);
+    }
+
     public function works(): HasMany
     {
         return $this->hasMany(Work::class);

@@ -16,6 +16,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     @include('admin.blocks._image_block', [
                         'name' => 'preview',
+                        'col' => 2,
                         'head' => __('Preview'),
                         'preview' => isset($data['work']) ? asset($data['work']->preview) : null,
                         'full' => isset($data['work']) ? asset($data['work']->preview) : null
@@ -35,10 +36,39 @@
                     @else
                         @include('admin.blocks._image_block', [
                             'name' => 'full',
+                            'col' => 6,
                             'head' => __('Full picture'),
                             'preview' => isset($data['work']) ? asset($data['work']->full) : null,
                             'full' => isset($data['work']) ? asset($data['work']->full) : null
                         ])
+                    @endif
+
+                    @if ($data['chapter']->id == 5)
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="panel panel-flat">
+                                <div class="panel-heading">
+                                    <div class="panel-title">PDF</div>
+                                </div>
+                                <div class="panel-body">
+                                    @include('admin.blocks._input_file_block', ['label' => '', 'name' =>  'url'])
+                                    <p id="no-pdf" class="ml-20 {{ !isset($data['work']) || $data['work']->url ? 'hidden' : '' }}"><b>{{ __('No PDF') }}</b></p>
+
+                                    @if (isset($data['work']) && $data['work']->url)
+                                        <div class="pdf-block">
+                                            @include('admin.blocks._icon_pdf_block',['addClass' => 'pull-left ml-20', 'id' => $data['work']->id])
+                                            @include('admin.blocks._button_block',[
+                                                'addAttr' => ['id' => 'delete-pdf-'.$data['work']->id],
+                                                'type' => 'button',
+                                                'mainClass' => 'bg-warning',
+                                                'addClass' => 'ml-10 delete-pdf',
+                                                'icon' => 'icon-stack-cancel',
+                                                'text' => __('Delete PDF')
+                                            ])
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     @endif
                 </div>
 

@@ -94,8 +94,24 @@ $(document).ready(function () {
             'id': localStorage.getItem('delete_id'),
         }, function (data) {
             if (data.success) {
-                var row = localStorage.getItem('delete_row');
+                let row = localStorage.getItem('delete_row');
                 $('#'+row).remove();
+            }
+        });
+    });
+
+    // Deleting PDF
+    $('button.delete-pdf').click(function () {
+        let id = parseInt($(this).attr('id').replace('delete-pdf-','')),
+            container = $(this).parents('.pdf-block')
+
+        $.post('/admin/delete-pdf', {
+            '_token': window.token,
+            'id': id,
+        }, function (data) {
+            if (data.success) {
+                container.remove();
+                $('#no-pdf').removeClass('hidden');
             }
         });
     });
@@ -276,7 +292,7 @@ function bindSeenAll() {
 
 function playWarning() {
     if (window.userInteract) {
-        var audio = new Audio();
+        let audio = new Audio();
         audio.preload = 'auto';
         audio.src = '/sound/new_message.wav';
         audio.play();

@@ -13,7 +13,7 @@ class StaticController extends Controller
         $data = [];
         $mainMenu = [];
 
-        $data['branches'] = Branch::query()->where('active',1)->with('works')->get();
+        $data['branches'] = Branch::query()->where('active',1)->with('activeWorks')->get();
         foreach ($data['branches'] as $item) {
             $mainMenu[] = ['href' => $item->slug, 'name' => $item[app()->getLocale()]];
         }
