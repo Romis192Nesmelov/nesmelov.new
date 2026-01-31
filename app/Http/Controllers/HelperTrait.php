@@ -19,7 +19,7 @@ trait HelperTrait
     public string $validationPassword = 'required|confirmed|min:3|max:50';
     public string $validationLoginPassword = 'required|min:3|max:50';
     public string $validationImage = 'file|mimes:jpeg|min:5|max:5000';
-    public string $validationPDF = 'nullable|file|mimes:pdf|min:5|max:5000';
+    public string $validationPDF = 'nullable|file|mimes:pdf|min:5|max:6000';
     public string $validationContactString = 'nullable|min:3|max:255';
     public string $validationEmail = 'nullable|email';
     public string $validationName = 'required|min:5|max:255';
