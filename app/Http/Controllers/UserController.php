@@ -852,40 +852,6 @@ class UserController extends Controller
         }
     }
 
-    private function createTaskMessage(Task|SubTask $item, string $mailView, array $mailFields, string $messageText, int $messageStatus, bool $sendMail): void
-    {
-        if (isset($item->task)) {
-            $taskId = $item->task->id;
-            $subTaskId = $item->id;
-            $owner = $item->task->owner;
-            $user = $item->task->user;
-        } else {
-            $taskId = $item->id;
-            $subTaskId = null;
-            $owner = $item->owner;
-            $user = $item->user;
-        }
-
-        if ($sendMail)
-            $this->sendMessage(
-                $owner->email,
-                ($owner->email != $user->email && $user->send_email ? $user->email : null),
-                $mailView,
-                $mailFields
-            );
-
-        Message::query()->create([
-            'message' => $messageText,
-            'owner_id' => $owner->id,
-            'user_id' => $user->id,
-            'task_id' => $taskId,
-            'sub_task_id' => $subTaskId,
-            'status' => $messageStatus,
-            'active_to_owner' => 1,
-            'active_to_user' => 1
-        ]);
-    }
-
     private function setSeenMessage(Message $message): void
     {
         $userType = Gate::allows('owner-message-not-admin', $message) ? 'owner' : 'user';
@@ -894,17 +860,6 @@ class UserController extends Controller
             $message->active_to_user = 0;
         } else $message['active_to_'.$userType] = 0;
         $message->save();
-    }
-
-    private function getBaseFieldsMailMessage(Task|SubTask $item): array
-    {
-        $mailFields = [];
-        $mailFields['id'] = $item->id;
-        $mailFields['name'] = $item->name;
-        $mailFields['customer'] = isset($item->task) ? $item->task->customer->name : $item->customer->name;
-        $mailFields['parent_id'] = isset($item->task) ? $item->task->id : null;
-        $mailFields['parent_name'] = isset($item->task) ? $item->task->name : null;
-        return $mailFields;
     }
 
     private function checkTaskStatus($fields)
