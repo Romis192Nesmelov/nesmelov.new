@@ -23,7 +23,7 @@
         )
             <tr role="row" id="{{ 'bill_'.$bill->id }}">
                 <td class="id">{{ $bill->number }}</td>
-                <td class="text-center"><a href="/admin/bills?id={{ $bill->id }}">{{ $bill->task->customer->name.' - '.$bill->task->name }}</a></td>
+                <td class="text-center"><a href="/admin/bills?id={{ $bill->id }}">{{ $bill->task->customer->name.' - '.($bill->task->paid_off && $bill->task->bills[0]->id == $bill->id ? __('Prepayment for').' '.mb_strtolower($bill->task->name) : $bill->task->name) }}</a></td>
                 <td class="text-center">{{ date('d.m.Y',$bill->date) }}</td>
                 {{--<td class="text-center">{{ $bill->user->name }}</td>--}}
                 <td class="text-center">
