@@ -1,10 +1,9 @@
 @extends('layouts.admin')
 
 @section('content')
-    @php $taskName = $data['bill']->task->paid_off && $data['bill']->task->bills[0]->id == $data['bill']->id ? __('Prepayment for').' '.mb_strtolower($data['bill']->task->name) : $data['bill']->task->name @endphp
     <div class="panel panel-flat">
         <div class="panel-heading">
-            <h4 class="panel-title">{{ isset($data['bill']) ? __('Bill').' '.__('#').$data['bill']->number.'. '.$data['bill']->task->customer->name.' — «'.$taskName.'»' : __('Adding a bill') }}</h4>
+            <h4 class="panel-title">{{ isset($data['bill']) ? __('Bill').' '.__('#').$data['bill']->number.'. '.$data['bill']->task->customer->name.' — «'.($data['bill']->task->paid_off && $data['bill']->task->bills[0]->id == $data['bill']->id ? __('Prepayment for').' '.mb_strtolower($data['bill']->task->name) : $data['bill']->task->name).'»' : __('Adding a bill') }}</h4>
         </div>
         <div class="panel-body">
             <form class="form-horizontal bill-form" enctype="multipart/form-data" action="{{ url('/admin/bill') }}" method="post">
