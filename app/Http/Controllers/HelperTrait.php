@@ -40,23 +40,23 @@ trait HelperTrait
         $tasks = Task::query()->where('percents','!=',0)->get();
         $subTasks = SubTask::query()->where('percents','!=',0)->get();
 
-//        foreach ($tasks as $task) {
-//            if ($task->percents <= 100) {
-//                $newValPercents = round($task->value/100*$task->percents);
-//                $task->percents = $newValPercents;
-//                $task->save();
-//                echo $newValPercents.'<br>';
-//            }
-//        }
-
-        foreach ($subTasks as $subTask) {
-            if ($subTask->percents <= 100) {
-                $newValPercents = round($subTask->value/100*$subTask->percents);
-                $subTask->percents = $newValPercents;
-                $subTask->save();
+        foreach ($tasks as $task) {
+            if ($task->percents <= 100) {
+                $newValPercents = round($task->value/100*$task->percents);
+                $task->percents = $newValPercents;
+                $task->save();
                 echo $newValPercents.'<br>';
             }
         }
+
+//        foreach ($subTasks as $subTask) {
+//            if ($subTask->percents <= 100) {
+//                $newValPercents = round($subTask->value/100*$subTask->percents);
+//                $subTask->percents = $newValPercents;
+//                $subTask->save();
+//                echo $newValPercents.'<br>';
+//            }
+//        }
     }
 
     /**
