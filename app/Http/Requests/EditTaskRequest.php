@@ -33,7 +33,7 @@ class EditTaskRequest extends FormRequest
             'convention_number' => 'nullable|integer|max:1000',
             'value' => $this->validationValue,
             'paid_off' => 'integer|max:2000000',
-            'percents' => 'max:100',
+            'percents' => request()->value,
             'start_time' => $this->validationDate,
             'completion_time' => $this->validationDate,
             'payment_time' => $this->validationDate,

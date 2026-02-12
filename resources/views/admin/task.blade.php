@@ -204,9 +204,8 @@
                                             'label' => __('Third-party %'),
                                             'name' => 'percents',
                                             'type' => 'number',
-                                            'step' => 0.001,
                                             'min' => 0,
-                                            'max' => 100,
+                                            'max' => isset($data['task']) ? $data['task']->value : 500000,
                                             'placeholder' => __('Third-party %'),
                                             'value' => isset($data['task']) && $data['task']->percents ? $data['task']->percents : 0
                                         ])

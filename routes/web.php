@@ -82,6 +82,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','lang'])->group(funct
 
     Route::get('/sent-emails', [AdminController::class, 'sentEmails'])->middleware(['admin']);
     Route::post('/delete-sent-email', [AdminController::class, 'deleteSentEmail'])->middleware(['admin']);
-
-    Route::get('/recalc-percents', [AdminController::class, 'recalcPercents'])->middleware(['admin']);
 });
