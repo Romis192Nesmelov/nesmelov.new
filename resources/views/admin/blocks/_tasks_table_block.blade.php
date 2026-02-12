@@ -75,13 +75,13 @@
                         $taskValueWithoutAll = calculateOverTaskVal($task, true, true, $task->use_duty, true);
 
                         $taskDuty = $task->use_duty ? calculateTaskDuty($taskValue, $task) : 0;
-                        $taskPercents = $task->percents ? calculateTaskPercents($taskValue - $taskDuty, $task->percents) : 0;
+                        $taskPercents = $task->percents;
                         if (count($task->subTasks) && $presentSubTasks) {
                             foreach ($task->subTasks as $subTask) {
                                 if ($subTask->percents && ($subTask->status == 1)) {
                                         $subTaskValueWithoutAll = calculateOverTaskVal($subTask, true, false, $task->use_duty, true);
                                         $subTaskDuty = $task->use_duty ? calculateTaskDuty($subTask->value, $task) : 0;
-                                        $taskPercents += $subTask->percents ? calculateTaskPercents($subTaskValueWithoutAll - $subTaskDuty, $subTask->percents) : 0;
+                                        $taskPercents += $subTask->percents;
                                 }
                             }
                         }

@@ -108,7 +108,7 @@ function calculateOverTaskVal($task, $fullVal=true, $percents=false, $duty=false
     elseif ( ($task->status == 3 || $task->status == 4) && $task->paid_off && !$fullVal) $value = $task->paid_off;
 
     if ($duty) $value -= calculateTaskDuty($value, $task);
-    if ($percents && $task->percents) $value -= calculateTaskPercents($value,$task->percents);
+    if ($percents && $task->percents) $value -= $task->percents;
     if ($task->paid_off && !$fullVal) $value -= $task->paid_off;
 
     return $value;
@@ -120,7 +120,7 @@ function calculateOverTaskVal($task, $fullVal=true, $percents=false, $duty=false
     if (isset($task->subTasks) && count($task->subTasks)) {
         foreach($task->subTasks as $subTask) {
             if ($subTask->status == 1 || $subTask->status == 2)
-                $value += $percents && $subTask->percents ? $subTask->value - calculateTaskPercents($subTask->value,$subTask->percents) : $subTask->value;
+                $value += $percents && $subTask->percents ? $subTask->value - $subTask->percents : $subTask->value;
         }
     }
     return $value;
@@ -131,11 +131,6 @@ function calculateTaskDuty($value, $task): float
     $settings = getSettings();
     if ((int)($task->tax_type)) return $value * $settings['tax'] * 0.01;
     else return $value * (int)($task->ltd != 2 ? $settings['tax1'] : $settings['tax2']) * 0.01;
-}
-
-function calculateTaskPercents($value, $percents): float
-{
-    return $value * $percents * 0.01;
 }
 
 function calculateMyPercent($task, $value): float

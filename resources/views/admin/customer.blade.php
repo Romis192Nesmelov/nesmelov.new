@@ -288,7 +288,7 @@
                     @include('admin.blocks._tasks_table_header_block')
                     @foreach ( (auth()->user()->is_admin ? $data['customer']->tasks : $data['customer']->userTasks) as $k => $task)
                         <?php
-                        $percents += $task->percents ? $task->value/100*$task->percents : 0;
+                        $percents += $task->percents;
                         $sum += $task->value;
 
                         if (count($task->subTasks)) {
