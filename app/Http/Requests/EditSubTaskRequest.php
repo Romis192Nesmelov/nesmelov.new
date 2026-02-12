@@ -28,7 +28,7 @@ class EditSubTaskRequest extends FormRequest
         $validationArr = [
             'name' => $this->validationName,
             'value' => $this->validationValue,
-            'percents' => 'max:100',
+            'percents' => $this->validationValue,
             'start_time' => $this->validationDate,
             'completion_time' => $this->validationDate,
             'description' => 'nullable|min:10|max:2000',

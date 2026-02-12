@@ -327,6 +327,9 @@ class UserController extends Controller
         $fields = $this->convertTimeFields($fields, ['start_time', 'completion_time', 'convention_date', 'payment_time']);
         $fields = $this->convertCheckFields($fields, ['use_duty', 'send_email', 'use_payment_time', 'save_convention']);
 
+        if (request()->percents > request()->value)
+            return redirect()->back()->withErrors(['percents' => __('Wrong percents value')])->withInput();
+
         if ($request->has('id')) {
             $task = Task::query()->where('id',$request->id)->with(['customer','subTasks','bills','owner','user'])->first();
             if (Gate::denies('owner-or-user-task', $task)) abort(403, __('You do not have the rights to perform this operation!'));
@@ -428,6 +431,8 @@ class UserController extends Controller
 
         if ($request->has('id')) {
             $subTask = SubTask::query()->where('id',$request->id)->with('task.customer')->first();
+            if (request()->percents > $subTask->task->value) return redirect()->back()->withErrors(['percents' => __('Wrong percents value')])->withInput();
+
             if (Gate::denies('owner-or-user-task', $subTask->task)) abort(403, __('You do not have the rights to perform this operation!'));
             if ($this->checkSubTaskTime($fields['completion_time'], $subTask->task) || $this->checkStartCompletionTime($fields)) return $this->returnWrongCompletionTime();
 
@@ -456,6 +461,8 @@ class UserController extends Controller
             $subTask->update($fields);
         } else {
             $task = Task::query()->where('id', $request->parent_id)->with(['owner','user'])->first();
+            if (request()->percents > $task) return redirect()->back()->withErrors(['percents' => __('Wrong percents value')])->withInput();
+
             if (Gate::denies('owner-or-user-task', $task)) abort(403, __('You do not have the rights to perform this operation!'));
             if ($this->checkSubTaskTime($fields['completion_time'], $task) || $this->checkStartCompletionTime($fields)) return $this->returnWrongCompletionTime();
 
