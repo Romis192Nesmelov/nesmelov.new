@@ -25,19 +25,16 @@ class EditBillRequest extends FormRequest
     {
         $validationArr = [
             'number' => $this->validationBillNumber,
-            'signing' => 'required|integer|min:1|max:3',
             'date' => $this->validationDate,
             'contract' => 'nullable|min:10|max:50000',
-            'save_contract' => 'nullable',
             'convention' => 'nullable|min:10|max:50000',
-            'save_convention' => 'nullable',
             'act' => 'nullable|min:10|max:50000',
-            'save_act' => 'nullable',
             'bill' => 'nullable|min:10|max:50000',
-            'save_bill' => 'nullable',
+            'send_email' => 'nullable'
         ];
 
         if (request()->has('id')) {
+            $validationArr['signing'] = 'required|integer|min:1|max:3';
             $validationArr['number'] .= ','.request()->id;
             $validationArr['status'] = 'required|integer|min:1|max:3';
         } else $validationArr['task_id'] = $this->validationTaskId;

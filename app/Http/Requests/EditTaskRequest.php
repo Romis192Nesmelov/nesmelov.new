@@ -42,8 +42,7 @@ class EditTaskRequest extends FormRequest
             'user_id' => $this->validationId.'users,id',
             'customer_id' => $this->validationCustomerId,
             'status' => 'required|integer|min:1|max:5',
-            'send_email' => 'nullable',
-            'save_convention' => 'nullable'
+            'send_email' => 'nullable'
         ];
 
         if (request()->has('id')) $validationArr['id'] = $this->validationTaskId;

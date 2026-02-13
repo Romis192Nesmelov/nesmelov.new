@@ -14,10 +14,7 @@ class Bill extends Model
         'signing',
         'user_id',
         'task_id',
-
-        'save_act',
         'act',
-        'save_bill',
         'bill',
     ];
 

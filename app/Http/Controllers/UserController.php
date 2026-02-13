@@ -325,10 +325,9 @@ class UserController extends Controller
     {
         $fields = $request->validated();
         $fields = $this->convertTimeFields($fields, ['start_time', 'completion_time', 'convention_date', 'payment_time']);
-        $fields = $this->convertCheckFields($fields, ['use_duty', 'send_email', 'use_payment_time', 'save_convention']);
+        $fields = $this->convertCheckFields($fields, ['use_duty', 'send_email', 'use_payment_time']);
 
-        if (request()->percents > request()->value)
-            return redirect()->back()->withErrors(['percents' => __('Wrong percents value')])->withInput();
+        if (request()->percents > request()->value) return redirect()->back()->withErrors(['percents' => __('Wrong percents value')])->withInput();
 
         if ($request->has('id')) {
             $task = Task::query()->where('id',$request->id)->with(['customer','subTasks','bills','owner','user'])->first();
@@ -498,11 +497,7 @@ class UserController extends Controller
     {
         $fields = $request->validated();
         $fields = $this->convertTimeFields($fields, ['date']);
-        $fields = $this->convertCheckFields($fields, ['save_contract','save_convention','save_act','save_bill','send_email']);
-
-        foreach (['contract','convention','act','bill'] as $item) {
-            if (!$fields['save_'.$item]) $fields[$item] = null;
-        }
+        $fields = $this->convertCheckFields($fields, ['send_email']);
 
         if (request()->has('id')) {
             $bill = Bill::query()->where('id',$request->id)->with(['task.customer','task.bills'])->first();
@@ -514,7 +509,7 @@ class UserController extends Controller
                 && $bill->task->status > 1
                 && $bill->task->status < 7
                 && isFinalBill($bill)
-            ) {
+            ){
                 $mailFields = $this->getBaseFieldsMailMessage($bill->task);
                 $mailFields['status'] = $this->getSimpleTaskStatus(1);
 
@@ -524,14 +519,22 @@ class UserController extends Controller
                 $bill->task->status = $bill->task->status == 6 ? 7 : 1;
                 $bill->task->save();
             }
-
             $this->changeBillsBrothersStatus($fields['signing'], $bill->task, $bill->id);
+
+            if (!$request->input('save_act')) $fields['act'] = null;
+            if (!$request->input('save_bill')) $fields['bill'] = null;
+
             $bill->update($fields);
 
             // Saving foreign documents
-            $bill->task->customer->update($fields);
-            $bill->task->update($fields);
+            if ($request->input('save_contract')) $bill->task->customer->update(['contract' => $fields['contract']]);
+            elseif ($bill->task->customer->contract) $bill->task->customer->update(['contract' => null]);
+
+            if ($request->input('save_convention')) $bill->task->update(['convention' => $fields['convention']]);
+            elseif ($bill->task->convention) $bill->task->update(['convention' => null]);
+
         } else {
+            $fields['signing'] = 1;
             $task = Task::query()->where('id',request()->task_id)->with(['customer','bills'])->first();
             if (
                 Gate::denies('check-rights',[$task, 'owner_id'])

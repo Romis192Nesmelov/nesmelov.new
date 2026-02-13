@@ -26,7 +26,6 @@ class Task extends Model
 
         'convention_number',
         'convention_date',
-        'save_convention',
         'convention',
         'tax_type',
 

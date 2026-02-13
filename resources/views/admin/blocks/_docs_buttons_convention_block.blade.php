@@ -1,5 +1,5 @@
 @if (moneyFormat(calculateOverTaskVal($task)))
-    @if ($task->save_convention && $task->convention)
+    @if ($task->convention)
         @include('admin.blocks._docs_button_block', [
             'text' => __('Print the custom agreement'),
             'href' => 'saved_convention?id='.$task->id

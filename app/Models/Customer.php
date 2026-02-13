@@ -20,10 +20,7 @@ class Customer extends Model
         'contact_person',
         'type',
         'description',
-
-        'save_contract',
         'contract',
-
         'contract_number',
         'contract_date',
         'ltd',

@@ -10,25 +10,23 @@
                 @csrf
                 @if (isset($data['bill']))
                     <input type="hidden" name="id" value="{{ $data['bill']->id }}">
-                @endif
 
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="panel panel-flat">
-                        <div class="panel-body">
-                            @include('admin.blocks._radio_button_block', [
-                                'name' => 'signing',
-                                'values' =>
-                                [
-                                    ['val' => 1, 'descript' => __('Signed on 1st side')],
-                                    ['val' => 2, 'descript' => __('At signing of 2nd side')],
-                                    ['val' => 3, 'descript' => __('Signed by both sides')]
-                                ],
-                                'activeValue' => isset($data['bill']) ? $data['bill']->signing : 1
-                            ])
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="panel panel-flat">
+                            <div class="panel-body">
+                                @include('admin.blocks._radio_button_block', [
+                                    'name' => 'signing',
+                                    'values' =>
+                                    [
+                                        ['val' => 1, 'descript' => __('Signed on 1st side')],
+                                        ['val' => 2, 'descript' => __('At signing of 2nd side')],
+                                        ['val' => 3, 'descript' => __('Signed by both sides')]
+                                    ],
+                                    'activeValue' => $data['bill']->signing
+                                ])
+                            </div>
                         </div>
-                    </div>
 
-                    @if (isset($data['bill']))
                         <div class="panel panel-flat">
                             <div class="panel-body">
                                 @include('admin.blocks._radio_button_block', [
@@ -52,7 +50,7 @@
                                 @include('admin.blocks._docs_buttons_convention_block',['task' => $data['bill']->task])
 
                                 @if ($data['bill']->status <= 2)
-                                    @if ($data['bill']->save_act && $data['bill']->act)
+                                    @if ($data['bill']->act)
                                         @include('admin.blocks._docs_button_block', ['text' => __('Print the custom act'), 'href' => 'saved_act?id='.$data['bill']->id])
                                     @else
                                         @include('admin.blocks._docs_button_block', ['text' => __('Print the act'), 'href' => 'act?id='.$data['bill']->id])
@@ -60,7 +58,7 @@
                                     @endif
                                 @endif
 
-                                @if ($data['bill']->save_bill && $data['bill']->bill)
+                                @if ($data['bill']->bill)
                                     @include('admin.blocks._docs_button_block', ['text' => __('Print the custom bill'), 'href' => 'saved_bill?id='.$data['bill']->id])
                                 @else
                                     @include('admin.blocks._docs_button_block', ['text' => __('Print the bill'), 'href' => 'bill?id='.$data['bill']->id])
@@ -72,10 +70,10 @@
                                 @endif
                             </div>
                         </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
 
-                <div class="col-md-8 col-sm-6 col-xs-12">
+                <div class="col-md-{{ isset($data['bill']) ? 8 : 12 }} col-sm-{{ isset($data['bill']) ? 6 : 12 }} col-xs-12">
                     <div class="panel panel-flat">
                         <div class="panel-body">
                             @if (isset($data['bill']))
@@ -115,7 +113,7 @@
                                 'name' => 'date',
                                 'value' => isset($data['bill']) ? $data['bill']->date : time()
                             ])
-                            @include('admin.blocks._checkbox_block', ['label' => __('Send an email to all participants when the account is closed'), 'name' => 'send_mail','checked' => (isset($data['bill']) ? $data['bill']->send_email : true)])
+                            @include('admin.blocks._checkbox_block', ['label' => __('Send an email to all participants when the account is closed'), 'name' => 'send_email','checked' => (isset($data['bill']) ? $data['bill']->send_email : true)])
                         </div>
                     </div>
                     @if (isset($data['bill']))
@@ -133,7 +131,7 @@
                                     'value' => $data['bill']->act ?? view('docs.blocks._act_body_block',['item' => $data['bill'],'noPrint' => true])->render(),
                                     'height' => 1000
                                 ])
-                                @include('admin.blocks._checkbox_block', ['label' => __('Save the act'), 'name' => 'save_act','checked' => $data['bill']->save_act])
+                                @include('admin.blocks._checkbox_block', ['label' => __('Save the act'), 'name' => 'save_act','checked' => $data['bill']->act])
                             </div>
                         </div>
 
@@ -148,7 +146,7 @@
                                     'value' => $data['bill']->bill ? $data['bill']->bill : view('docs.blocks._bill_body_block',['item' => $data['bill'],'noPrint' => true])->render(),
                                     'height' => 1000
                                 ])
-                                @include('admin.blocks._checkbox_block', ['label' => __('Save the bill'), 'name' => 'save_bill','checked' => $data['bill']->save_bill])
+                                @include('admin.blocks._checkbox_block', ['label' => __('Save the bill'), 'name' => 'save_bill','checked' => $data['bill']->bill])
                             </div>
                         </div>
                     @endif

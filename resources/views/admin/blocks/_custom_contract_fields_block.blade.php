@@ -10,6 +10,6 @@
             'value' => $customer->contract ?? view('docs.blocks._contract_body_block',['item' => $customer, 'taxType' => isset($task) ? $task->tax_type : (int)getSettings()['my_status']])->render(),
             'height' => 1000
         ])
-        @include('admin.blocks._checkbox_block', ['label' => __('Save contract'), 'name' => 'save_contract','checked' => $customer->save_contract])
+        @include('admin.blocks._checkbox_block', ['label' => __('Save contract'), 'name' => 'save_contract','checked' => $customer->contract])
     </div>
 </div>
