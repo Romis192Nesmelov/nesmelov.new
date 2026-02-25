@@ -39,9 +39,6 @@ function getMetas(): array
     return [
         'meta_description' => ['name' => 'description', 'property' => false],
         'meta_keywords' => ['name' => 'keywords', 'property' => false],
-        'meta_twitter_card' => ['name' => 'twitter:card', 'property' => false],
-        'meta_twitter_size' => ['name' => 'twitter:size', 'property' => false],
-        'meta_twitter_creator' => ['name' => 'twitter:creator', 'property' => false],
         'meta_og_url' => ['name' => false, 'property' => 'og:url'],
         'meta_og_type' => ['name' => false, 'property' => 'og:type'],
         'meta_og_title' => ['name' => false, 'property' => 'og:title'],

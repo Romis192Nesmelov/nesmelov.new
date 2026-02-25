@@ -272,7 +272,7 @@ class AdminController extends UserController
         $metas = getMetas();
 
         foreach ($metas as $meta => $params) {
-            $settings->seo->$meta = $fields($meta);
+            $settings->seo->$meta = $fields[$meta];
         }
         $this->saveSettings($settings);
 
