@@ -20,6 +20,7 @@
         <tax>6</tax>
         <tax1>6</tax1>
         <tax2>4</tax2>
+        <fix_tax>0</fix_tax>
         <my_status>0</my_status>
         <my_percent>12</my_percent>
     </settings>

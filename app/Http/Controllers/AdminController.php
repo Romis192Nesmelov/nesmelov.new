@@ -216,8 +216,10 @@ class AdminController extends UserController
 
         $this->saveSettings($settings);
 
-        $this->getFixTax();
-        $this->data['fix_tax']->update(['value' => $fields['fix_tax']]);
+        if (isset($fields['fix_tax'])) {
+            $this->getFixTax();
+            $this->data['fix_tax']->update(['value' => $fields['fix_tax']]);
+        }
         $this->saveCompleteMessage();
         return redirect(url('/admin/settings'));
     }
