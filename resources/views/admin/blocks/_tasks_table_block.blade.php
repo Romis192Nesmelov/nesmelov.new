@@ -70,7 +70,7 @@
                         }
                     }
 
-                    if ($task->status == 1) {
+                    if ($task->status == 1 || $task->paid_off) {
                         $taskValue = calculateOverTaskVal($task);
                         $taskValueWithoutAll = calculateOverTaskVal($task, true, true, $task->use_duty, true);
 

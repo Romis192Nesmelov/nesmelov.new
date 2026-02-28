@@ -13,15 +13,7 @@
         </nobr>
     </td>
     <td class="text-center">{{ date('d.m.Y',$task->start_time) }}</td>
-    <td class="text-center
-        @if ($task->status == 2 || $task->status == 3 || $task->status == 5)
-            @if (($task->status == 3 || $task->status == 5) && $task->completion_time-time() < (60*60*24))
-                {{ ' text-warning-700' }}
-            @elseif ( (($task->status == 3 || $task->status == 5) && $task->completion_time-time() < (60*60*24)) || ($task->status == 2 && ($task->payment_time && $task->payment_time < time())) )
-                {{ ' text-danger-800' }}
-            @endif
-        @endif
-            ">
+    <td class="text-center {{ (($task->status == 3 || $task->status == 5) && $task->completion_time - time() < (60*60*24)) || ($task->status != 1 && $task->payment_time && $task->payment_time < time()) ? 'text-warning-700' : '' }}">
         {{ date('d.m.Y',$task->completion_time) }}
     </td>
     <td class="text-center">

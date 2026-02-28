@@ -329,6 +329,8 @@ class UserController extends Controller
 
         if (request()->percents > request()->value) return redirect()->back()->withErrors(['percents' => __('Wrong percents value')])->withInput();
 
+        if (!$fields['use_payment_time']) $fields['payment_time'] = null;
+
         if ($request->has('id')) {
             $task = Task::query()->where('id',$request->id)->with(['customer','subTasks','bills','owner','user'])->first();
             if (Gate::denies('owner-or-user-task', $task)) abort(403, __('You do not have the rights to perform this operation!'));
