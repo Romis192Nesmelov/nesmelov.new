@@ -246,8 +246,8 @@ class UserController extends Controller
             $tasksIds = Task::query()->where('customer_id',$customer->id)->pluck('id')->toArray();
             $this->data['bills'] =
                 Gate::allows('is-admin') ?
-                Bill::query()->whereIn('task_id',$tasksIds)->orderBy('date','desc')->get() :
-                Bill::query()->where('user_id',Auth::id())->whereIn('task_id',$tasksIds)->orderBy('date','desc')->get();
+                Bill::query()->with('task.customer')->whereIn('task_id',$tasksIds)->orderBy('date','desc')->get() :
+                Bill::query()->with('task.customer')->where('user_id',Auth::id())->whereIn('task_id',$tasksIds)->orderBy('date','desc')->get();
             return $this->showView('bills');
         } else {
             $this->data['head'] = __('Bills');
