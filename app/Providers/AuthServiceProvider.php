@@ -34,38 +34,31 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('owner-or-user-task', function (User $user, Task|SubTask $task) {
-            $task->load(['owner','user']);
-            return $user->is_admin || $user->id == $task->owner->id || $user->id == $task->user->id;
+            return $user->is_admin || $user->id == $task->owner_id || $user->id == $task->user_id;
         });
 
         Gate::define('owner-task', function (User $user, Task $task) {
-            $task->load('owner');
-            return $user->is_admin || $user->id == $task->owner->id;
+            return $user->is_admin || $user->id == $task->owner_id;
         });
 
         Gate::define('owner-or-user-message', function (User $user, Message $message) {
-            $message->load(['owner','user']);
-            return $user->is_admin || $user->id == $message->owner->id || $user->id == $message->user->id;
+            return $user->is_admin || $user->id == $message->owner_id || $user->id == $message->user_id;
         });
 
         Gate::define('owner-message', function (User $user, Message $message) {
-            $message->load('owner');
-            return $user->is_admin || $user->id == $message->owner->id;
+            return $user->is_admin || $user->id == $message->owner_id;
         });
 
         Gate::define('owner-or-user-message-not-admin', function (User $user, Message $message) {
-            $message->load(['owner','user']);
-            return $user->id == $message->owner->id || $user->id == $message->user->id;
+            return $user->id == $message->owner_id || $user->id == $message->user_id;
         });
 
         Gate::define('owner-message-not-admin', function (User $user, $message) {
-            $message->load('owner');
-            return $user->id == $message->owner->id;
+            return $user->id == $message->owner_id;
         });
 
         Gate::define('user-message-not-admin', function (User $user, $message) {
-            $message->load('user');
-            return $user->id == $message->user->id;
+            return $user->id == $message->user_id;
         });
 
         Gate::define('user-edit', function (User $user, User $editingUser) {
