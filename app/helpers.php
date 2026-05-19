@@ -127,12 +127,12 @@ function calculateTaskDuty($value, $task): float
 {
     $settings = getSettings();
     if ((int)($task->tax_type)) return $value * $settings['tax'] * 0.01;
-    else return $value * (int)($task->ltd != 2 ? $settings['tax1'] : $settings['tax2']) * 0.01;
+    else return $value * ((int)$task->customer->ltd != 2 ? $settings['tax1'] : $settings['tax2']) * 0.01;
 }
 
 function calculateMyPercent($task, $value): float
 {
-    return $value * ($task->my_percent ? $task->my_percent : (int)getSettings()['my_percent']) * 0.01;
+    return $value * ($task->my_percent ?: (int)getSettings()['my_percent']) * 0.01;
 }
 
 function moneyFormat($value): string
