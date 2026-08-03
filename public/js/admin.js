@@ -118,7 +118,8 @@ $(document).ready(function () {
 
     // Change customer in bill's page
     $('form.bill-form select[name=task_id]').change(function () {
-        var id = $(this).val();
+        let id = $(this).val();
+        console.log(1342342);
         $.post('/admin/get-convention-number', {
             '_token': window.token,
             'id': id
@@ -130,7 +131,7 @@ $(document).ready(function () {
             '_token': window.token,
             'id': id
         }, function (data) {
-            $('input[name=value]').val(data.value);
+            $('.bill-value').html(data.value);
         });
     });
 
