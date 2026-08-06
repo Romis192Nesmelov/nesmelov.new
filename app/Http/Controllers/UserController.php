@@ -696,7 +696,7 @@ class UserController extends Controller
         ) response()->json(['success' => false]);
 
         if ($model instanceof User) {
-            $table->load(['tasks','ownTasks'.'bills']);
+            $table->load(['tasks','ownTasks','bills']);
             if (count($table->tasks)) {
                 $this->changeUserTask($table->tasks, 'user_id');
             }
