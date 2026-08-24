@@ -139,7 +139,7 @@
                         @endforeach
                     </table>
                 @endif
-                @include('admin.blocks._add_button_block',['href' => 'chapters/'.$data['chapter']->en.'/add', 'text' => __('Add a work')])
+                @include('admin.blocks._add_button_block',['href' => 'chapters/'.(str_replace(' ','_',$data['chapter']->en)).'/add', 'text' => __('Add a work')])
             </div>
         @endif
 
