@@ -152,7 +152,7 @@
         <div class="page-header-content">
             <div class="page-title">
                 <h4>
-                    <i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Home</span>
+                    <i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">{{ __("Home page") }}</span>
                     @foreach ($breadcrumbs as $href => $crumb)
                         @include('admin.blocks._cropped_content_block',[
                             'croppingContent' => '- '.$crumb,
@@ -165,7 +165,7 @@
 
         <div class="breadcrumb-line">
             <ul class="breadcrumb">
-                <li><a href="{{ url('/admin') }}"><i class="icon-home2 position-left"></i>Home</a></li>
+                <li><a href="{{ url('/admin') }}"><i class="icon-home2 position-left"></i>{{ __("Home page") }}</a></li>
                 @foreach ($breadcrumbs as $href => $crumb)
                     <li><a href="{{ url('/admin/'.$href) }}">
                             @include('admin.blocks._cropped_content_block',[

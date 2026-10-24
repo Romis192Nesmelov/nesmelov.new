@@ -1,0 +1,1 @@
+$(document).ready(function(){$(`#print a`).click(function(e){e.preventDefault(),$(this).remove(),window.print()})});

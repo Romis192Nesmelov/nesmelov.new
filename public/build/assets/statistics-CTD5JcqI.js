@@ -1,0 +1,1 @@
+$(document).ready(function(t){e(),t(window).resize(function(){e()})});function e(){window.slider&&window.slider.destroy(),window.slider=new PowerSlider(`#slider-statistics`,{min:1,max:maxMonth},[minVal,maxVal],1,!0,!0)}

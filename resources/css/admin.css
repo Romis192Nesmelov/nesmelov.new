@@ -19,6 +19,20 @@
  *
  * ---------------------------------------------------------------------------- */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+
+:root {
+    --main-color: #166dba;
+    --second-color: #738aa3;
+}
+
+.text-main-color {
+    color: var(--main-color);
+}
+
+.text-second-color {
+    color: var(--second-color);
+}
+
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -200,6 +214,14 @@ table {
 td,
 th {
   padding: 0;
+}
+
+.icon-object {
+    width: 85px;
+    height: 85px;
+    padding: 23px 10px;
+    text-align: center;
+    color: var(--second-color);
 }
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
@@ -10423,9 +10445,6 @@ li + .dropdown-header.highlight,
 .navbar-btn {
   margin-left: 20px;
 }
- + .navbar-btn {
-  margin-left: 0;
-}
 .navbar-btn,
 .navbar-sm .navbar-btn.btn-sm,
 .navbar-xs .navbar-btn.btn-xs {
@@ -10464,9 +10483,6 @@ li + .dropdown-header.highlight,
   .navbar-btn.btn-sm,
   .navbar-btn.btn-xs {
     margin: 13px 20px;
-  }
-  .navbar-btn + .navbar-btn {
-    margin-left: 0;
   }
 }
 .navbar-text {

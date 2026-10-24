@@ -10418,9 +10418,6 @@ li + .dropdown-header.highlight,
 .navbar-btn {
   margin-left: 20px;
 }
- + .navbar-btn {
-  margin-left: 0;
-}
 .navbar-btn,
 .navbar-sm .navbar-btn.btn-sm,
 .navbar-xs .navbar-btn.btn-xs {
@@ -10460,7 +10457,7 @@ li + .dropdown-header.highlight,
   .navbar-btn.btn-xs {
     margin: 13px 20px;
   }
-  .navbar-btn + .navbar-btn {
+  .navbar-btn {
     margin-left: 0;
   }
 }

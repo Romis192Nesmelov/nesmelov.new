@@ -75,10 +75,7 @@ $(document).ready(function () {
                     $('a[data-scroll=' + scrollData + ']').addClass('active');
                 }
             });
-
-            let button = $('#on_top_button');
-            if (win.scrollTop() > win.outerHeight()) button.fadeIn();
-            else button.fadeOut();
+            showOrHideOnTopButton();
         }
     });
 
@@ -101,6 +98,7 @@ function goToScroll(scrollData, scrollClass) {
         scrollTop: $('.'+scrollClass+'[data-scroll=' + scrollData + ']').offset().top
     }, 1000, 'easeInOutQuint', function () {
         window.scrollFlag = false;
+        showOrHideOnTopButton();
     });
 }
 
@@ -110,6 +108,14 @@ function videoContainerHeight() {
 
 function removeActiveInMainMenu() {
     $('.main-menu > a.active').removeClass('active');
+}
+
+function showOrHideOnTopButton() {
+    let button = $('#on_top_button'),
+        win = $(window);
+
+    if (win.scrollTop() > win.outerHeight()) button.fadeIn();
+    else button.fadeOut();
 }
 
 function tolocalstring(string, dimm) {

@@ -1,21 +1,72 @@
 {
   "resources/css/admin.css": {
-    "file": "assets/admin-B8JBjFhe.css",
+    "file": "assets/admin-D6g-EoON.css",
+    "name": "admin",
+    "names": [
+      "admin.css"
+    ],
     "src": "resources/css/admin.css",
-    "isEntry": true
+    "isEntry": true,
+    "assets": [
+      "assets/glyphicons-halflings-regular-BUJKDMgK.eot",
+      "assets/glyphicons-halflings-regular-DzqM6ju8.woff2",
+      "assets/glyphicons-halflings-regular-BKjkU69z.woff",
+      "assets/glyphicons-halflings-regular-DrwTMapi.ttf",
+      "assets/glyphicons-halflings-regular-DSXsy3si.svg",
+      "assets/summernote-C0TKNKkq.eot",
+      "assets/summernote-Dh9ru_WK.woff",
+      "assets/summernote-Dq2c9Deg.ttf"
+    ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-M84cSDZz.css",
+    "file": "assets/app-DJEkO2je.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
     "src": "resources/css/app.css",
-    "isEntry": true
+    "isEntry": true,
+    "assets": [
+      "assets/glyphicons-halflings-regular-BUJKDMgK.eot",
+      "assets/glyphicons-halflings-regular-DzqM6ju8.woff2",
+      "assets/glyphicons-halflings-regular-BKjkU69z.woff",
+      "assets/glyphicons-halflings-regular-DrwTMapi.ttf",
+      "assets/glyphicons-halflings-regular-DSXsy3si.svg",
+      "assets/summernote-C0TKNKkq.eot",
+      "assets/summernote-Dh9ru_WK.woff",
+      "assets/summernote-Dq2c9Deg.ttf",
+      "assets/main_bg-B2eEQPR5.jpg",
+      "assets/main_bg_light-BU0EZ_Tj.jpg",
+      "assets/black-BZcv51yz.png",
+      "assets/white-CIMuI07a.png",
+      "assets/light-grey-bg-BvXZ29bP.jpg"
+    ]
   },
   "resources/css/auth.css": {
-    "file": "assets/auth-mYrTqANg.css",
+    "file": "assets/auth-JPHP1RVK.css",
+    "name": "auth",
+    "names": [
+      "auth.css"
+    ],
     "src": "resources/css/auth.css",
-    "isEntry": true
+    "isEntry": true,
+    "assets": [
+      "assets/glyphicons-halflings-regular-BUJKDMgK.eot",
+      "assets/glyphicons-halflings-regular-DzqM6ju8.woff2",
+      "assets/glyphicons-halflings-regular-BKjkU69z.woff",
+      "assets/glyphicons-halflings-regular-DrwTMapi.ttf",
+      "assets/glyphicons-halflings-regular-DSXsy3si.svg",
+      "assets/summernote-C0TKNKkq.eot",
+      "assets/summernote-Dh9ru_WK.woff",
+      "assets/summernote-Dq2c9Deg.ttf"
+    ]
   },
   "resources/css/docs.css": {
-    "file": "assets/docs-C4rgCCa3.css",
+    "file": "assets/docs-DonCwfWB.css",
+    "name": "docs",
+    "names": [
+      "docs.css"
+    ],
     "src": "resources/css/docs.css",
     "isEntry": true
   },
@@ -40,9 +91,20 @@
     "src": "resources/css/icons/fontawesome/fonts/fontawesome-webfont.woff2"
   },
   "resources/css/icons/fontawesome/styles.min.css": {
-    "file": "assets/styles-Cc7NitkR.css",
+    "file": "assets/styles-Juu9EkQB.css",
+    "name": "styles.min",
+    "names": [
+      "styles.css"
+    ],
     "src": "resources/css/icons/fontawesome/styles.min.css",
-    "isEntry": true
+    "isEntry": true,
+    "assets": [
+      "assets/fontawesome-webfont-C7hRAymh.eot",
+      "assets/fontawesome-webfont-BBOCxDGX.woff2",
+      "assets/fontawesome-webfont-D1RX9NVh.woff",
+      "assets/fontawesome-webfont-DYfWyl7r.ttf",
+      "assets/fontawesome-webfont-DZsvXNup.svg"
+    ]
   },
   "resources/css/icons/glyphicons/glyphicons-halflings-regular.eot": {
     "file": "assets/glyphicons-halflings-regular-BUJKDMgK.eot",
@@ -81,9 +143,19 @@
     "src": "resources/css/icons/icomoon/fonts/icomoon.woff"
   },
   "resources/css/icons/icomoon/styles.css": {
-    "file": "assets/styles-CTYVB9SP.css",
+    "file": "assets/styles-B2RzmNn6.css",
+    "name": "styles",
+    "names": [
+      "styles.css"
+    ],
     "src": "resources/css/icons/icomoon/styles.css",
-    "isEntry": true
+    "isEntry": true,
+    "assets": [
+      "assets/icomoon-RabqmaB2.eot",
+      "assets/icomoon-CPwfPeKl.woff",
+      "assets/icomoon-B8MqBWp-.ttf",
+      "assets/icomoon-CK-ZaQjV.svg"
+    ]
   },
   "resources/css/icons/summernote/summernote.eot": {
     "file": "assets/summernote-C0TKNKkq.eot",
@@ -98,31 +170,31 @@
     "src": "resources/css/icons/summernote/summernote.woff"
   },
   "resources/js/app.js": {
-    "file": "assets/app-BlqB9-Ps.js",
+    "file": "assets/app-BWEifj5H.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
   },
   "resources/js/docs.js": {
-    "file": "assets/docs-BCc_BvJy.js",
+    "file": "assets/docs-BtN2Xjtt.js",
     "name": "docs",
     "src": "resources/js/docs.js",
     "isEntry": true
   },
   "resources/js/fancybox.min.js": {
-    "file": "assets/fancybox.min-BMFRUrPs.js",
+    "file": "assets/fancybox.min-OmakejmM.js",
     "name": "fancybox.min",
     "src": "resources/js/fancybox.min.js",
     "isEntry": true
   },
   "resources/js/jquery.easing.js": {
-    "file": "assets/jquery.easing-BYF1YoEQ.js",
+    "file": "assets/jquery.easing-CgdHI1a9.js",
     "name": "jquery.easing",
     "src": "resources/js/jquery.easing.js",
     "isEntry": true
   },
   "resources/js/statistics.js": {
-    "file": "assets/statistics-BHgrTP5g.js",
+    "file": "assets/statistics-CTD5JcqI.js",
     "name": "statistics",
     "src": "resources/js/statistics.js",
     "isEntry": true

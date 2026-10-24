@@ -40,6 +40,12 @@ class UserController extends Controller
     protected array $data = [];
     protected string $regYear = '/^(20(\d){2})$/';
 
+    public function home(): View
+    {
+        $this->breadcrumbs = [];
+        return $this->showView('home');
+    }
+
     public function users($slug=null): View
     {
         $this->breadcrumbs = ['users' => __('Users')];

@@ -1,7 +1,7 @@
 @foreach ($values as $value)
     <div class="form-group {{ isset($addClass) ? $addClass : '' }} {{ $errors && $errors->has($name) ? 'has-error' : '' }}">
         <div class="col-md-{{ isset($colMd) ? $colMd : '12' }}">
-            <input class="radio-input" value="{{ $value['val'] }}" type="radio" name="{{ $name }}" {{ $activeValue == $value['val'] || (count($errors) && $value['val'] == old($name)) ? 'checked' : '' }}>
+            <input class="radio-input" value="{{ isset($value['val']) && !count($errors) ? $value['val'] : old($name) }}" type="radio" name="{{ $name }}" {{ $activeValue == $value['val'] || (count($errors) && $value['val'] == old($name)) ? 'checked' : '' }}>
             <span class="control-label">{!! $value['descript'] !!}</span>
             @if ($errors && $errors->has($name))
                 <div class="form-control-feedback">

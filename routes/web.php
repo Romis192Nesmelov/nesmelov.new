@@ -27,13 +27,15 @@ Route::prefix('auth')->name('auth.')->controller(AuthController::class)->group(f
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth','lang'])->group(function () {
-    Route::get('/', function () { return redirect(route('admin.tasks')); })->name('home');
+//    Route::get('/', function () { return redirect(route('admin.tasks')); })->name('home');
+
+    Route::get('/', [UserController::class, 'home'])->name('home');
 
     Route::post('/seen-all', [UserController::class, 'seenAll']);
 
     Route::get('/change-lang', [UserController::class, 'changeLang'])->name('change-lang');
 
-    Route::get('/users/{slug?}', [UserController::class, 'users']);
+    Route::get('/users/{slug?}', [UserController::class, 'users'])->name('users');
     Route::post('/user', [UserController::class, 'editUser']);
     Route::post('/delete-user', [AdminController::class, 'deleteUser'])->middleware(['admin']);
 
@@ -45,18 +47,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','lang'])->group(funct
     Route::post('/sub_task', [UserController::class,'editSubTask']);
     Route::post('/delete-sub-task', [UserController::class,'deleteSubTask']);
 
-    Route::get('/messages', [UserController::class, 'messages']);
+    Route::get('/messages', [UserController::class, 'messages'])->name('messages');
     Route::post('/delete-message', [UserController::class, 'deleteMessage']);
 
-    Route::get('/customers/{slug?}', [UserController::class, 'customers']);
+    Route::get('/customers/{slug?}', [UserController::class, 'customers'])->name('customers');
     Route::post('/customer', [AdminController::class, 'editCustomer'])->middleware(['admin']);
     Route::post('/delete-customer', [AdminController::class, 'deleteCustomer'])->middleware(['admin']);
 
-    Route::get('/banks/{slug?}', [UserController::class, 'banks']);
+    Route::get('/banks/{slug?}', [UserController::class, 'banks'])->name('banks');
     Route::post('/bank', [UserController::class, 'editBank']);
     Route::post('/delete-bank', [UserController::class, 'deleteBank']);
 
-    Route::get('/bills/{slug?}', [UserController::class, 'bills']);
+    Route::get('/bills/{slug?}', [UserController::class, 'bills'])->name('bills');
     Route::post('/bill', [UserController::class, 'editBill']);
     Route::post('/delete-bill', [UserController::class, 'deleteBill']);
 
@@ -65,21 +67,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','lang'])->group(funct
 
     Route::get('/print-doc/{slug}', [UserController::class, 'printDoc']);
 
-    Route::get('/statistics/{slug?}', [AdminController::class, 'statistics'])->middleware(['admin']);
+    Route::get('/statistics/{slug?}', [AdminController::class, 'statistics'])->middleware(['admin'])->name('statistics');
 
-    Route::get('/seo', [AdminController::class, 'seo']);
+    Route::get('/seo', [AdminController::class, 'seo'])->name('seo');
     Route::post('/seo', [AdminController::class, 'editSeo'])->middleware(['admin']);
 
-    Route::get('/settings', [AdminController::class, 'settings'])->middleware(['admin']);
+    Route::get('/settings', [AdminController::class, 'settings'])->middleware(['admin'])->name('settings');
     Route::post('/settings', [AdminController::class, 'editSettings'])->middleware(['admin']);
 
-    Route::get('/chapters/{slug?}/{subSlug?}', [AdminController::class, 'chapters'])->middleware(['admin']);
+    Route::get('/chapters/{slug?}/{subSlug?}', [AdminController::class, 'chapters'])->middleware(['admin'])->name('chapters');
     Route::post('/chapter', [AdminController::class, 'editChapter'])->middleware(['admin']);
 
     Route::post('/work', [AdminController::class, 'editWork'])->middleware(['admin']);
     Route::post('/delete-work', [AdminController::class, 'deleteWork'])->middleware(['admin']);
     Route::post('/delete-pdf', [AdminController::class, 'deletePdf'])->middleware(['admin']);
 
-    Route::get('/sent-emails', [AdminController::class, 'sentEmails'])->middleware(['admin']);
+    Route::get('/sent-emails', [AdminController::class, 'sentEmails'])->middleware(['admin'])->name('sent-emails');
     Route::post('/delete-sent-email', [AdminController::class, 'deleteSentEmail'])->middleware(['admin']);
 });

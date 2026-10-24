@@ -10194,9 +10194,6 @@ li + .dropdown-header.highlight,
 .navbar-btn {
   margin-left: 20px;
 }
- + .navbar-btn {
-  margin-left: 0;
-}
 .navbar-btn,
 .navbar-sm .navbar-btn.btn-sm,
 .navbar-xs .navbar-btn.btn-xs {
@@ -10235,9 +10232,6 @@ li + .dropdown-header.highlight,
   .navbar-btn.btn-sm,
   .navbar-btn.btn-xs {
     margin: 13px 20px;
-  }
-  .navbar-btn + .navbar-btn {
-    margin-left: 0;
   }
 }
 .navbar-text {
@@ -30349,7 +30343,7 @@ thead .htCollapseButton:after {
 *
 *  # Responsive extension
 *
-*  Optimise the table's layout for different screen sizes through the dynamic 
+*  Optimise the table's layout for different screen sizes through the dynamic
 *  insertion and removal of columns from the table
 *
 *  Version: 1.0
