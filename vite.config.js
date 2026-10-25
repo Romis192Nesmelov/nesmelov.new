@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/css/docs.css',
                 'resources/js/fancybox.min.js',
                 'resources/js/jquery.easing.js',
+                'resources/js/uniform.min.js',
                 'resources/js/app.js',
                 'resources/js/docs.js',
                 'resources/js/statistics.js',

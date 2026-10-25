@@ -113,8 +113,8 @@
         <ul class="navigation navigation-main navigation-accordion">
             <!-- Main -->
             @foreach ($menus as $menu)
-                <li {{ (preg_match('/^(admin\/'.str_replace('/','\/',$menu['href']).')/', request()->path())) || (isset($menu['sub_href']) && preg_match('/^(admin\/'.str_replace('/','\/',$menu['sub_href']).')/', request()->path())) ? 'class=active' : '' }}>
-                    <a href="{{ url('/admin/'.$menu['href']) }}"><i class="{{ $menu['icon'] }}"></i> <span>{{ mb_substr($menu['name'], 0, 20) }}</span></a>
+                <li {{ request()->routeIs('admin.'.$menu['href']) ? 'class=active' : '' }}>
+                    <a href="{{ route('admin.'.$menu['href']) }}"><i class="{{ $menu['icon'] }}"></i> <span>{{ mb_substr($menu['name'], 0, 20) }}</span></a>
                     @if (isset($menu['submenu']) && count($menu['submenu']))
                         <ul>
                             @foreach ($menu['submenu'] as $submenu)
@@ -126,8 +126,8 @@
                                     }
                                 }
                                 ?>
-                                <li {{ preg_match('/^(admin\/'.str_replace('/','\/',$menu['href'].'/'.$submenu['href']).')/', request()->path()) || (request()->has('id') && request()->path() == 'admin/'.$menu['href'] && str_replace('?id=','',$submenu['href']) == request()->input('id')) ? 'class=active' : '' }}>
-                                    <a href="{{ url('/admin/'.$menu['href'].'/'.$submenu['href']) }}" {!! $addAttrStr !!}>{{ mb_substr($submenu['name'], 0, 20) }}</a>
+                                <li {{ request()->routeIs('admin.'.$menu['href']) && request()->slug == $submenu['href'] ? 'class=active' : '' }}>
+                                    <a href="{{ route('admin.'.$menu['href'], ['slug' => $submenu['href']]) }}" {!! $addAttrStr !!}>{{ mb_substr($submenu['name'], 0, 20) }}</a>
                                 </li>
                             @endforeach
                         </ul>

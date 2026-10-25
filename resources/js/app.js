@@ -3,7 +3,7 @@ $(document).ready(function () {
     window.scrollFlag = false;
 
     $('#video-container').click(function () {
-        var multimedia = document.getElementById('main-video');
+        let multimedia = document.getElementById('main-video');
         multimedia.play();
     });
 
@@ -16,7 +16,8 @@ $(document).ready(function () {
 
     $('.styled').uniform();
 
-    $('a.img-preview').fancybox({padding: 3});
+    let imgPreview = $('a.img-preview');
+    if (imgPreview.length) imgPreview.fancybox({padding: 3});
 
     // var video = document.getElementById('main-video'),
         // simpleTileBg = $('#simple-tile-bg');

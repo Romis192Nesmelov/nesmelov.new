@@ -119,7 +119,6 @@ class UserController extends Controller
             $this->getTasks($slug);
             $this->getSidebar();
             $this->getFixTax();
-
             return $this->showView('tasks');
         }
     }
@@ -802,14 +801,14 @@ class UserController extends Controller
             $this->breadcrumbs['tasks/'.$slug] = getTaskConditions()[$slug];
 
             $tasks = $tasks->where('status',$status);
-            $modelForYear = $modelForYear->where('status',$status);
+            $modelForYear = $modelForYear->query()->where('status',$status);
         } else {
             $this->getTasksInWork();
         }
 
         if (Gate::allows('is-admin')) {
             $this->data['tasks'] = $tasks->get();
-            $this->getTaskYears($modelForYear->query()->orderBy('start_time')->pluck('start_time')->toArray());
+            $this->getTaskYears($modelForYear->orderBy('start_time')->pluck('start_time')->toArray());
         } else {
             $taskOwn = clone $tasks;
             $modelForYearOwn = clone $modelForYear;

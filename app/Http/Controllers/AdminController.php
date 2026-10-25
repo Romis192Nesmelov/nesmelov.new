@@ -95,7 +95,7 @@ class AdminController extends UserController
         $this->data['min_val'] = $minVal;
         $this->data['max_val'] = $maxVal;
 
-        $tasks = Task::query()->with(['subTasks','statistics'])->get();
+        $tasks = Task::query()->with(['subTasks','statistics'])->with('customer')->get();
         foreach ($tasks as $task) {
             // Merge statistics
             if (count($task->statistics)) {
@@ -161,6 +161,7 @@ class AdminController extends UserController
             ->get();
 
         $this->getTasksInWork();
+        $this->getFixTax();
 
         $this->data['done_tasks'] = Task::query()->where(function($query) use ($min, $max) {
             $query->where('status',1)->where('completion_time','>=',$min)->where('completion_time','<=',$max);
