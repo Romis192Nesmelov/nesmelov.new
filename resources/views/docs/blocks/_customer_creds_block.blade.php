@@ -8,7 +8,7 @@
         ЗАО
     @endif
     «{{ $customer->name }}»<br>
-    <b>{{ !$customer->ltd ? 'Руководитель' : 'Генеральный директор:'}}</b> {{ $customer->director }}<br>
+    <b>{{ !$customer->ltd ? 'Руководитель:' : 'Генеральный директор:'}}</b> {{ $customer->director }}<br>
 
     @foreach(['ОГРН' => 'ogrn', 'ОКПО' => 'okpo', 'ОКВЭД' => 'okved', 'ОКТМО' => 'oktmo', 'ИНН' => 'inn', 'КПП' => 'kpp'] as $name => $item)
         @if ($customer[$item])
